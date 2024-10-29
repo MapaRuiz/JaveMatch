@@ -55,17 +55,25 @@ public class UserLikeLogic {
         Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
             .orElseThrow(() -> new Exception("User not found"));
         Usuario likedUsuario = usuarioLogic.getUsuarioById(likedUsuarioId)
-            .orElseThrow(() -> new Exception("likedUser not found"));
-        
+            .orElseThrow(() -> new Exception("Liked user not found"));
+
         if (usuario.getLikesGiven().size() >= usuario.getPlan().getMaxLikes()) {
             throw new Exception("Like limit reached for your plan");
         }
 
-        Optional<UserLike> existingLike = likeRepository.findByUsuarioLike_User_idAndLikedUsuario_User_id(usuarioId, likedUsuarioId);
-        if (existingLike.isPresent()) {
+        // Check if the like already exists
+        boolean likeExists = false;
+        for (UserLike like : usuario.getLikesGiven()) {
+            if (like.getLikedUsuario().getUser_id().equals(likedUsuarioId)) {
+                likeExists = true;
+                break;
+            }
+        }
+        if (likeExists) {
             throw new Exception("You have already liked this user");
         }
 
+        // Create and save the new like
         UserLike userLike = new UserLike();
         userLike.setUsuarioLike(usuario);
         userLike.setLikedUsuario(likedUsuario);
@@ -77,12 +85,23 @@ public class UserLikeLogic {
         usuarioLogic.updateLikesGiven(usuarioId, usuario.getLikesGiven());
         usuarioLogic.updateLikesReceived(likedUsuarioId, likedUsuario.getLikesReceived());
 
-        if (likeRepository.existsByUsuarioLike_User_idAndLikedUsuario_User_id(likedUsuarioId, usuarioId)) {
+        // Check if mutual like exists
+        boolean mutualLikeExists = false;
+        for (UserLike like : likedUsuario.getLikesGiven()) {
+            if (like.getLikedUsuario().getUser_id().equals(usuarioId)) {
+                mutualLikeExists = true;
+                break;
+            }
+        }
+
+        if (mutualLikeExists) {
+            // Create match and send notifications
             userMatchLogic.createMatch(usuarioId, likedUsuarioId);
             notificacionLogic.sendNotification(likedUsuarioId, "You have a new match!", false);
             notificacionLogic.sendNotification(usuarioId, "You have a new match!", false);
         }
 
         return userLike;
+
     }
 }
