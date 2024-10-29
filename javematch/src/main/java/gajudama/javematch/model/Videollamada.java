@@ -37,7 +37,7 @@ public class Videollamada {
     private List<Juego> juegos;
 
     @OneToMany(mappedBy = "videollamada")
-    private List<Match> matches;  // Matches linked to this Videollamada
+    private List<UserMatch> matches;  // Matches linked to this Videollamada
 
     @OneToMany(mappedBy = "videollamada")
     private List<Reporte> reportes;  // Reports linked to this Videollamada

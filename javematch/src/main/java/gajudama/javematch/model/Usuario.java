@@ -27,10 +27,10 @@ public class Usuario {
     
     // Matches as user1 and user2
     @OneToMany(mappedBy = "user1")
-    private List<Match> matchesAsUser1;
+    private List<UserMatch> matchesAsUser1;
 
     @OneToMany(mappedBy = "user2")
-    private List<Match> matchesAsUser2;
+    private List<UserMatch> matchesAsUser2;
 
     // Reports as author and as reported user
     @OneToMany(mappedBy = "autor")
@@ -40,10 +40,10 @@ public class Usuario {
     private List<Reporte> reportsReceived;
 
     @OneToMany(mappedBy = "usuarioLike")
-    private List<Like> likesGiven;
+    private List<UserLike> likesGiven;
 
     @OneToMany(mappedBy = "likedUsuario")
-    private List<Like> likesReceived;
+    private List<UserLike> likesReceived;
 
     @OneToMany(mappedBy = "usuarioRechazo")
     private List<Rechazo> rejectionsGiven;

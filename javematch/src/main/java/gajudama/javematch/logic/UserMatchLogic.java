@@ -5,23 +5,23 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import gajudama.javematch.accesoDatos.MatchRepository;
-import gajudama.javematch.model.Match;
+import gajudama.javematch.accesoDatos.UserMatchRepository;
+import gajudama.javematch.model.UserMatch;
 
 @Service
-public class MatchLogic {
+public class UserMatchLogic {
     @Autowired
-    private MatchRepository matchRepository;
+    private UserMatchRepository matchRepository;
 
-    public Match createMatch(Match match) {
+    public UserMatch createMatch(UserMatch match) {
         return matchRepository.save(match);
     }
 
-    public Optional<Match> getMatchById(Long id) {
+    public Optional<UserMatch> getMatchById(Long id) {
         return matchRepository.findById(id);
     }
 
-    public Match updateMatch(Long id, Match matchDetails) {
+    public UserMatch updateMatch(Long id, UserMatch matchDetails) {
         return matchRepository.findById(id).map(match -> {
             match.setFechaMatch(matchDetails.getFechaMatch());
             match.setAmistad(matchDetails.getAmistad());
@@ -34,7 +34,7 @@ public class MatchLogic {
         matchRepository.deleteById(id);
     }
 
-    public List<Match> getAllMatches() {
+    public List<UserMatch> getAllMatches() {
         return matchRepository.findAll();
     }
 }

@@ -5,23 +5,23 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import gajudama.javematch.accesoDatos.LikeRepository;
-import gajudama.javematch.model.Like;
+import gajudama.javematch.accesoDatos.UserLikeRepository;
+import gajudama.javematch.model.UserLike;
 
 @Service
-public class LikeLogic {
+public class UserLikeLogic {
     @Autowired
-    private LikeRepository likeRepository;
+    private UserLikeRepository likeRepository;
 
-    public Like createLike(Like like) {
+    public UserLike createLike(UserLike like) {
         return likeRepository.save(like);
     }
 
-    public Optional<Like> getLikeById(Long id) {
+    public Optional<UserLike> getLikeById(Long id) {
         return likeRepository.findById(id);
     }
 
-    public Like updateLike(Long id, Like likeDetails) {
+    public UserLike updateLike(Long id, UserLike likeDetails) {
         return likeRepository.findById(id).map(like -> {
             like.setFechaLike(likeDetails.getFechaLike());
             like.setLikedUsuario(likeDetails.getLikedUsuario());
@@ -34,7 +34,7 @@ public class LikeLogic {
         likeRepository.deleteById(id);
     }
 
-    public List<Like> getAllLikes() {
+    public List<UserLike> getAllLikes() {
         return likeRepository.findAll();
     }
 

@@ -12,23 +12,17 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Match {
-
+public class UserLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private Usuario user1;  // First user in the match
+    private Usuario usuarioLike;  // User who gives the like
 
     @ManyToOne
-    private Usuario user2;  // Second user in the match
+    private Usuario likedUsuario; // User who receives the like
 
-    @Temporal(TemporalType.DATE)
-    private Date fechaMatch;  // Match date
-
-    private Boolean amistad;  // Indicates if the match is a friendship
-
-    @ManyToOne
-    private Videollamada videollamada;  // Optional videollamada associated with the match
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaLike;
 }
