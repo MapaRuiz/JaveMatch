@@ -20,10 +20,10 @@ public class Notificacion {
     private String mensaje;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaEnvio;
+    private Date fechaEnvio;  // Date the notification was sent
 
-    private Boolean estadoLectura;
+    private Boolean estadoLectura;  // Whether the notification has been read
 
     @ManyToOne
-    private Usuario usuarioNotificado;
+    private Usuario usuarioNotificado;  // The user who received the notification
 }

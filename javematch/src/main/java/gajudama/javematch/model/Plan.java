@@ -1,9 +1,11 @@
 package gajudama.javematch.model;
 
+import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
@@ -13,6 +15,10 @@ public class Plan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nombre;
-    private Integer maxLikes;
+    private String nombre;  // Plan name
+    private Integer maxLikes;  // Max likes allowed for this plan
+
+    // Optional: Users associated with this plan
+    @OneToMany(mappedBy = "plan")
+    private List<Usuario> usuarios;  // List of users assigned to this plan
 }

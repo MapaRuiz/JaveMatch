@@ -18,10 +18,10 @@ public class Like {
     private Long id;
 
     @ManyToOne
-    private Usuario usuarioLike;
+    private Usuario usuarioLike;  // User who gives the like
 
     @ManyToOne
-    private Usuario likedUsuario;
+    private Usuario likedUsuario; // User who receives the like
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaLike;

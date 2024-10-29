@@ -6,9 +6,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.JoinColumn;
 import lombok.Data;
 
 @Data
@@ -25,9 +28,17 @@ public class Videollamada {
 
     private Integer duracion; // Duración en minutos
 
-    @OneToMany(mappedBy = "videollamada")
-    private List<Reporte> reportes;
+    @ManyToMany
+    @JoinTable(
+        name = "videollamada_juego",
+        joinColumns = @JoinColumn(name = "videollamada_id"),
+        inverseJoinColumns = @JoinColumn(name = "juego_id")
+    )
+    private List<Juego> juegos;
 
-    @OneToMany(mappedBy = "videollamadaJuego")
-    private List<VideollamadaJuego> videollamadaJuegos;
+    @OneToMany(mappedBy = "videollamada")
+    private List<Match> matches;  // Matches linked to this Videollamada
+
+    @OneToMany(mappedBy = "videollamada")
+    private List<Reporte> reportes;  // Reports linked to this Videollamada
 }

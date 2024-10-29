@@ -10,15 +10,13 @@ import lombok.Data;
 @Data
 @Entity
 public class Amistad {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    private Usuario usuarioAmistad;
+    private Usuario usuarioAmistad; // The user initiating the friendship
 
     @ManyToOne
-    private Usuario amigoUsuario;
-
+    private Usuario amigoUsuario;   // The friend user
 }

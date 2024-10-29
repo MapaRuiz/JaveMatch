@@ -18,17 +18,17 @@ public class Reporte {
     private Long id;
 
     @ManyToOne
-    private Usuario autor;
-
-    @ManyToOne 
-    private Usuario reportado;
-
-    private String tipo;
-    private String descripcion;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaRep;
+    private Usuario autor;  // The user who created the report
 
     @ManyToOne
-    private Videollamada videollamada;
+    private Usuario reportado;  // The user being reported
+
+    private String tipo;  // Type of report (e.g., spam, abuse)
+    private String descripcion;  // Description of the report
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaRep;  // Date and time of the report
+
+    @ManyToOne
+    private Videollamada videollamada;  // Optional videollamada related to the report
 }

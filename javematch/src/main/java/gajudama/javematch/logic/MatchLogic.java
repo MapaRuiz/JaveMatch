@@ -1,55 +1,40 @@
 package gajudama.javematch.logic;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.MatchRepository;
 import gajudama.javematch.model.Match;
-import gajudama.javematch.model.Usuario;
-import gajudama.javematch.model.Videollamada;
 
 @Service
 public class MatchLogic {
-    private final MatchRepository matchRepository;
+    @Autowired
+    private MatchRepository matchRepository;
 
-    public MatchLogic(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
-
-    public List<Match> getAllMatches() {
-        return matchRepository.findAll();
+    public Match createMatch(Match match) {
+        return matchRepository.save(match);
     }
 
     public Optional<Match> getMatchById(Long id) {
         return matchRepository.findById(id);
     }
 
-    public Match createMatch(Usuario user1, Usuario user2, Videollamada videollamada) {
-        Match match = new Match();
-        match.setUser1(user1);
-        match.setUser2(user2);
-        match.setFechaMatch(new Date());
-        match.setAmistad(false);
-        match.setVideollamada(videollamada);
-        return matchRepository.save(match);
-    }
-
-    public Match updateMatch(Long id, Match updatedMatch) {
+    public Match updateMatch(Long id, Match matchDetails) {
         return matchRepository.findById(id).map(match -> {
-            match.setUser1(updatedMatch.getUser1());
-            match.setUser2(updatedMatch.getUser2());
-            match.setAmistad(updatedMatch.getAmistad());
-            match.setVideollamada(updatedMatch.getVideollamada());
+            match.setFechaMatch(matchDetails.getFechaMatch());
+            match.setAmistad(matchDetails.getAmistad());
+            match.setVideollamada(matchDetails.getVideollamada());
             return matchRepository.save(match);
-        }).orElseGet(() -> {
-            updatedMatch.setId(id);
-            return matchRepository.save(updatedMatch);
-        });
+        }).orElseThrow(() -> new RuntimeException("Match not found"));
     }
 
     public void deleteMatch(Long id) {
         matchRepository.deleteById(id);
+    }
+
+    public List<Match> getAllMatches() {
+        return matchRepository.findAll();
     }
 }

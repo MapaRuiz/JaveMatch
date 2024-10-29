@@ -3,6 +3,7 @@ package gajudama.javematch.logic;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.InteresRepository;
@@ -11,36 +12,31 @@ import gajudama.javematch.model.Interes;
 @Service
 public class InteresLogic {
 
-    private final InteresRepository interesRepository;
+     @Autowired
+    private InteresRepository interesRepository;
 
-    public InteresLogic(InteresRepository interesRepository) {
-        this.interesRepository = interesRepository;
-    }
-
-    public List<Interes> getAllIntereses() {
-        return interesRepository.findAll();
+    public Interes createInteres(Interes interes) {
+        return interesRepository.save(interes);
     }
 
     public Optional<Interes> getInteresById(Long id) {
         return interesRepository.findById(id);
     }
 
-    public Interes createInteres(Interes interes) {
-        return interesRepository.save(interes);
-    }
-
-    public Interes updateInteres(Long id, Interes updatedInteres) {
+    public Interes updateInteres(Long id, Interes interesDetails) {
         return interesRepository.findById(id).map(interes -> {
-            interes.setNombre(updatedInteres.getNombre());
+            interes.setNombre(interesDetails.getNombre());
+            interes.setUsuarios(interesDetails.getUsuarios());
             return interesRepository.save(interes);
-        }).orElseGet(() -> {
-            updatedInteres.setId(id);
-            return interesRepository.save(updatedInteres);
-        });
+        }).orElseThrow(() -> new RuntimeException("Interes not found"));
     }
 
     public void deleteInteres(Long id) {
         interesRepository.deleteById(id);
+    }
+
+    public List<Interes> getAllIntereses() {
+        return interesRepository.findAll();
     }
 
 }

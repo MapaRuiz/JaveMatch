@@ -18,10 +18,10 @@ public class Rechazo {
     private Long id;
 
     @ManyToOne
-    private Usuario usuarioRechazo;
+    private Usuario usuarioRechazo;  // User who gives the rejection
 
     @ManyToOne
-    private Usuario rechazadoUsuario;
+    private Usuario rechazadoUsuario; // User who receives the rejection
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaRechazo;

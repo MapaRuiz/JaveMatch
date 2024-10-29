@@ -1,43 +1,43 @@
 package gajudama.javematch.logic;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import gajudama.javematch.accesoDatos.NotificacionRepository;
 import gajudama.javematch.model.Notificacion;
-import gajudama.javematch.model.Usuario;
 
 @Service
 public class NotificacionLogic {
-    private final NotificacionRepository notificacionRepository;
+    @Autowired
+    private NotificacionRepository notificacionRepository;
 
-    public NotificacionLogic(NotificacionRepository notificacionRepository) {
-        this.notificacionRepository = notificacionRepository;
-    }
-
-    public List<Notificacion> getAllNotificaciones() {
-        return notificacionRepository.findAll();
-    }
-
-    public Notificacion createNotificacion(Usuario usuario, String mensaje) {
-        Notificacion notificacion = new Notificacion();
-        notificacion.setUsuarioNotificado(usuario);
-        notificacion.setMensaje(mensaje);
-        notificacion.setFechaEnvio(new Date());
-        notificacion.setEstadoLectura(false);
+    public Notificacion createNotificacion(Notificacion notificacion) {
         return notificacionRepository.save(notificacion);
     }
 
-    public void markAsRead(Long id) {
-        notificacionRepository.findById(id).ifPresent(notificacion -> {
-            notificacion.setEstadoLectura(true);
-            notificacionRepository.save(notificacion);
-        });
+    public Optional<Notificacion> getNotificacionesById(Long id) {
+        return notificacionRepository.findById(id);
+    }
+
+    public Notificacion updateNotificacion(Long id, Notificacion notificacionDetails) {
+        return notificacionRepository.findById(id).map(notificacion -> {
+            notificacion.setEstadoLectura(notificacionDetails.getEstadoLectura());
+            notificacion.setFechaEnvio(notificacionDetails.getFechaEnvio());
+            notificacion.setMensaje(notificacionDetails.getMensaje());
+            notificacion.setUsuarioNotificado(notificacionDetails.getUsuarioNotificado());
+            return notificacionRepository.save(notificacion);
+        }).orElseThrow(() -> new RuntimeException("Notificacion not found"));
     }
 
     public void deleteNotificacion(Long id) {
         notificacionRepository.deleteById(id);
+    }
+
+    public List<Notificacion> getAllNotificaciones() {
+        return notificacionRepository.findAll();
     }
     
 }
