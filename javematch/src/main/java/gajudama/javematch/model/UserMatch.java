@@ -30,5 +30,5 @@ public class UserMatch {
     private Boolean amistad;  // Indicates if the match is a friendship
 
     @ManyToOne
-    private Videollamada videollamada;  // Optional videollamada associated with the match
+    private Videollamada videollamada_Match;  //Videollamada associated with the match
 }

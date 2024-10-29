@@ -59,5 +59,16 @@ public class NotificacionLogic {
         notificacion.setEstadoLectura(isRead);
         notificacionRepository.save(notificacion);
     }
+
+    @Transactional
+    public void sendFriendRequestNotification(Long usuarioId, Long likedUsuarioId) {
+        Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Usuario likedUsuario = usuarioLogic.getUsuarioById(likedUsuarioId)
+            .orElseThrow(() -> new RuntimeException("Liked user not found"));
+
+        sendNotification(usuarioId, "Would you like to be friends with " + likedUsuario.getNombre() + "?", false);
+        sendNotification(likedUsuarioId, "Would you like to be friends with " + usuario.getNombre() + "?", false);
+    }
     
 }

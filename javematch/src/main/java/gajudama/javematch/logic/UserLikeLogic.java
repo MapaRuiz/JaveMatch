@@ -54,6 +54,8 @@ public class UserLikeLogic {
     public UserLike likeUser(Long usuarioId, Long likedUsuarioId) throws Exception {
         Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
             .orElseThrow(() -> new Exception("User not found"));
+        Usuario likedUsuario = usuarioLogic.getUsuarioById(likedUsuarioId)
+            .orElseThrow(() -> new Exception("likedUser not found"));
         
         if (usuario.getLikesGiven().size() >= usuario.getPlan().getMaxLikes()) {
             throw new Exception("Like limit reached for your plan");
@@ -66,9 +68,14 @@ public class UserLikeLogic {
 
         UserLike userLike = new UserLike();
         userLike.setUsuarioLike(usuario);
-        userLike.setLikedUsuario(usuarioLogic.getUsuarioById(likedUsuarioId)
-            .orElseThrow(() -> new Exception("User to like not found")));
+        userLike.setLikedUsuario(likedUsuario);
         likeRepository.save(userLike);
+
+        // Update user's likesGiven and likesReceived
+        usuario.getLikesGiven().add(userLike);
+        likedUsuario.getLikesReceived().add(userLike);
+        usuarioLogic.updateLikesGiven(usuarioId, usuario.getLikesGiven());
+        usuarioLogic.updateLikesReceived(likedUsuarioId, likedUsuario.getLikesReceived());
 
         if (likeRepository.existsByUsuarioLikeAndLikedUsuario(likedUsuarioId, usuarioId)) {
             userMatchLogic.createMatch(usuarioId, likedUsuarioId);

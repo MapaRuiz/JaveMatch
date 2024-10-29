@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.AmistadRepository;
 import gajudama.javematch.model.Amistad;
+import gajudama.javematch.model.UserMatch;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -14,6 +15,10 @@ public class AmistadLogic {
 
     @Autowired
     private AmistadRepository amistadRepository;
+    @Autowired
+    private UserMatchLogic userMatchLogic;
+    @Autowired
+    private UsuarioLogic usuarioLogic;
 
     @Transactional
     public Amistad createAmistad(Amistad amistad) {
@@ -43,6 +48,29 @@ public class AmistadLogic {
 
     public List<Amistad> getAllAmistades() {
         return amistadRepository.findAll();
+    }
+
+    @Transactional
+    public Amistad confirmFriendship(Long matchId, boolean isFriend) {
+        UserMatch match = userMatchLogic.getMatchById(matchId)
+            .orElseThrow(() -> new RuntimeException("Match not found"));
+
+        if (isFriend) {
+            match.setAmistad(true);
+            Amistad amistad = new Amistad();
+            amistad.setUsuarioAmistad(match.getUser1());
+            amistad.setAmigoUsuario(match.getUser2());
+            amistadRepository.save(amistad);
+
+            // Update user's friendships
+            match.getUser1().getFriendshipsAsUser().add(amistad);
+            match.getUser2().getFriendshipsAsFriend().add(amistad);
+            usuarioLogic.updateFriendshipsAsUser(match.getUser1().getUser_id(), match.getUser1().getFriendshipsAsUser());
+            usuarioLogic.updateFriendshipsAsFriend(match.getUser2().getUser_id(), match.getUser2().getFriendshipsAsFriend());
+
+            return amistad;
+        }
+        return null;
     }
 
 }
