@@ -1,0 +1,16 @@
+
+# servicios a ejecutar
+services:
+  db:
+    image: mysql:8.0.31
+    container_name: jave-match-db
+    environment:
+    - MYSQL_DATABASE=JaveMatch
+    - MYSQL_USER=JaveMatch
+    - MYSQL_PASSWORD=secret
+    - MYSQL_ROOT_PASSWORD=secret
+    ports:
+    - '3306:3306'
+    expose:
+    - '3306'
+  
