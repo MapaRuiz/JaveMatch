@@ -8,7 +8,7 @@ import gajudama.javematch.model.UserLike;
 
 @Repository
 public interface UserLikeRepository extends JpaRepository<UserLike, Long> {
-    Optional<UserLike> findByUsuarioLikeAndLikedUsuario(Long usuarioLikeId, Long likedUsuarioId);
-    boolean existsByUsuarioLikeAndLikedUsuario(Long usuarioLikeId, Long likedUsuarioId);
+    Optional<UserLike> findByUsuarioLike_IdAndLikedUsuario_Id(Long usuarioLikeId, Long likedUsuarioId);
+    boolean existsByUsuarioLike_IdAndLikedUsuario_Id(Long usuarioLikeId, Long likedUsuarioId);
 }
 

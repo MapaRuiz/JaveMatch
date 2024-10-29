@@ -61,7 +61,7 @@ public class UserLikeLogic {
             throw new Exception("Like limit reached for your plan");
         }
 
-        Optional<UserLike> existingLike = likeRepository.findByUsuarioLikeAndLikedUsuario(usuarioId, likedUsuarioId);
+        Optional<UserLike> existingLike = likeRepository.findByUsuarioLike_IdAndLikedUsuario_Id(usuarioId, likedUsuarioId);
         if (existingLike.isPresent()) {
             throw new Exception("You have already liked this user");
         }
@@ -77,7 +77,7 @@ public class UserLikeLogic {
         usuarioLogic.updateLikesGiven(usuarioId, usuario.getLikesGiven());
         usuarioLogic.updateLikesReceived(likedUsuarioId, likedUsuario.getLikesReceived());
 
-        if (likeRepository.existsByUsuarioLikeAndLikedUsuario(likedUsuarioId, usuarioId)) {
+        if (likeRepository.existsByUsuarioLike_IdAndLikedUsuario_Id(likedUsuarioId, usuarioId)) {
             userMatchLogic.createMatch(usuarioId, likedUsuarioId);
             notificacionLogic.sendNotification(likedUsuarioId, "You have a new match!", false);
             notificacionLogic.sendNotification(usuarioId, "You have a new match!", false);
