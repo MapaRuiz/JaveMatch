@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.PlanRepository;
 import gajudama.javematch.model.Plan;
+import jakarta.transaction.Transactional;
 
 @Service
 public class PlanLogic {
     @Autowired
     private PlanRepository planRepository;
 
+    @Transactional
     public Plan createPlan(Plan plan) {
         return planRepository.save(plan);
     }
@@ -22,6 +24,7 @@ public class PlanLogic {
         return planRepository.findById(id);
     }
 
+    @Transactional
     public Plan updatePlan(Long id, Plan planDetails) {
         return planRepository.findById(id).map(plan -> {
             plan.setMaxLikes(planDetails.getMaxLikes());
@@ -31,6 +34,7 @@ public class PlanLogic {
         }).orElseThrow(() -> new RuntimeException("Plan not found"));
     }
 
+    @Transactional
     public void deletePlan(Long id) {
         planRepository.deleteById(id);
     }

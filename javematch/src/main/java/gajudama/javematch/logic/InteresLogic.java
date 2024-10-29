@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.InteresRepository;
 import gajudama.javematch.model.Interes;
+import jakarta.transaction.Transactional;
 
 @Service
 public class InteresLogic {
@@ -15,6 +16,7 @@ public class InteresLogic {
      @Autowired
     private InteresRepository interesRepository;
 
+    @Transactional
     public Interes createInteres(Interes interes) {
         return interesRepository.save(interes);
     }
@@ -23,6 +25,7 @@ public class InteresLogic {
         return interesRepository.findById(id);
     }
 
+    @Transactional
     public Interes updateInteres(Long id, Interes interesDetails) {
         return interesRepository.findById(id).map(interes -> {
             interes.setNombre(interesDetails.getNombre());
@@ -31,6 +34,7 @@ public class InteresLogic {
         }).orElseThrow(() -> new RuntimeException("Interes not found"));
     }
 
+    @Transactional
     public void deleteInteres(Long id) {
         interesRepository.deleteById(id);
     }

@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.RechazoRepository;
 import gajudama.javematch.model.Rechazo;
+import jakarta.transaction.Transactional;
 
 @Service
 public class RechazoLogic {
     @Autowired
     private RechazoRepository rechazoRepository;
 
+    @Transactional
     public Rechazo createRechazo(Rechazo rechazo) {
         return rechazoRepository.save(rechazo);
     }
@@ -22,6 +24,7 @@ public class RechazoLogic {
         return rechazoRepository.findById(id);
     }
 
+    @Transactional
     public Rechazo updateRechazo(Long id, Rechazo rechazoDetails) {
         return rechazoRepository.findById(id).map(rechazo -> {
             rechazo.setFechaRechazo(rechazoDetails.getFechaRechazo());
@@ -31,6 +34,7 @@ public class RechazoLogic {
         }).orElseThrow(() -> new RuntimeException("Rechazo not found"));
     }
 
+    @Transactional
     public void deleteRechazo(Long id) {
         rechazoRepository.deleteById(id);
     }

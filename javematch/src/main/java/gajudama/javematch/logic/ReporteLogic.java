@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.ReporteRepository;
 import gajudama.javematch.model.Reporte;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReporteLogic {
     @Autowired
     private ReporteRepository reporteRepository;
 
+    @Transactional
     public Reporte createReporte(Reporte reporte) {
         return reporteRepository.save(reporte);
     }
@@ -21,6 +23,7 @@ public class ReporteLogic {
         return reporteRepository.findById(id);
     }
 
+    @Transactional
     public Reporte updateReporte(Long id, Reporte reporteDetails) {
         return reporteRepository.findById(id).map(reporte -> {
             reporte.setTipo(reporteDetails.getTipo());
@@ -31,6 +34,7 @@ public class ReporteLogic {
         }).orElseThrow(() -> new RuntimeException("Reporte not found"));
     }
 
+    @Transactional
     public void deleteReporte(Long id) {
         reporteRepository.deleteById(id);
     }

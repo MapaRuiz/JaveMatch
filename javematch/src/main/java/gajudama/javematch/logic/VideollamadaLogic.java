@@ -7,12 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.VideollamadaRepository;
 import gajudama.javematch.model.Videollamada;
+import jakarta.transaction.Transactional;
 
 @Service
 public class VideollamadaLogic {
     @Autowired
     private VideollamadaRepository videollamadaRepository;
 
+    @Transactional
     public Videollamada createVideollamada(Videollamada videollamada) {
         return videollamadaRepository.save(videollamada);
     }
@@ -21,6 +23,7 @@ public class VideollamadaLogic {
         return videollamadaRepository.findById(id);
     }
 
+    @Transactional
     public Videollamada updateVideollamada(Long id, Videollamada videollamadaDetails) {
         return videollamadaRepository.findById(id).map(videollamada -> {
             videollamada.setFechaVideollamada(videollamadaDetails.getFechaVideollamada());
@@ -31,6 +34,7 @@ public class VideollamadaLogic {
         }).orElseThrow(() -> new RuntimeException("Videollamada not found"));
     }
 
+    @Transactional
     public void deleteVideollamada(Long id) {
         videollamadaRepository.deleteById(id);
     }

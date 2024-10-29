@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javeriana Match - Social Network</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="header">
+        <h1>Javeriana Match</h1>
+        <p>The exclusive social network for Javeriana students!</p>
+        <nav>
+            <ul>
+                <li><a href="#match">Find a Match</a></li>
+                <li><a href="#video">Random Video Call</a></li>
+                <li><a href="#friends">Friend List</a></li>
+                <li><a href="#notifications">Notifications</a></li>
+                <li><a href="#reports">Report a User</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Match Section -->
+    <section id="match" class="section">
+        <h2>Find Your Match</h2>
+        <p>Like or pass profiles based on your interests. Start building connections now!</p>
+        <button onclick="findMatch()">Find Match</button>
+    </section>
+
+    <!-- Random Video Call Section -->
+    <section id="video" class="section">
+        <h2>Random Video Call</h2>
+        <p>Start a random video call and meet someone new. Enjoy games and chat together!</p>
+        <button onclick="startRandomCall()">Start Video Call</button>
+    </section>
+
+    <!-- Friend List Section -->
+    <section id="friends" class="section">
+        <h2>Your Friends</h2>
+        <p>Check your friend list and stay connected with people you’ve met on Javeriana Match.</p>
+        <button onclick="viewFriends()">View Friends</button>
+    </section>
+
+    <!-- Notifications Section -->
+    <section id="notifications" class="section">
+        <h2>Notifications</h2>
+        <p>Stay updated on new matches, friend requests, and important notifications.</p>
+        <button onclick="viewNotifications()">View Notifications</button>
+    </section>
+
+    <!-- Report Section -->
+    <section id="reports" class="section">
+        <h2>Report a User</h2>
+        <p>If you encountered inappropriate behavior, please report it to help keep our community safe.</p>
+        <button onclick="reportUser()">Report User</button>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <p>&copy; 2023 Javeriana Match. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Placeholder JavaScript functions -->
+    <script>
+        // Fetch API to find a match
+        async function findMatch() {
+            try {
+                const response = await fetch('/api/usermatch', { method: 'POST' });
+                if (response.ok) {
+                    const matchData = await response.json();
+                    alert(`Match found with ${matchData.name}!`);
+                    // Optionally, update the UI to show match data
+                } else {
+                    alert("No match found or limit reached!");
+                }
+            } catch (error) {
+                console.error("Error finding match:", error);
+                alert("Failed to find a match. Try again later.");
+            }
+        }
+    
+        // Fetch API to start a random video call
+        async function startRandomCall() {
+            try {
+                const response = await fetch('/api/videollamada/random-call', { method: 'POST' });
+                if (response.ok) {
+                    const callData = await response.json();
+                    alert("Random call started! Join link: " + callData.link);
+                    // Redirect to or open call link
+                    window.open(callData.link, "_blank");
+                } else {
+                    alert("Failed to start a video call.");
+                }
+            } catch (error) {
+                console.error("Error starting call:", error);
+                alert("Failed to start a video call. Try again later.");
+            }
+        }
+    
+        // Fetch API to view friends list
+        async function viewFriends() {
+            try {
+                const response = await fetch('/api/usuario/friends');
+                if (response.ok) {
+                    const friends = await response.json();
+                    alert(`You have ${friends.length} friends.`);
+                    // Display friends list dynamically in the UI, e.g., in a modal or a new section
+                } else {
+                    alert("Failed to load friends list.");
+                }
+            } catch (error) {
+                console.error("Error loading friends:", error);
+                alert("Could not load friends list.");
+            }
+        }
+    
+        // Fetch API to view notifications
+        async function viewNotifications() {
+            try {
+                const response = await fetch('/api/notificacion');
+                if (response.ok) {
+                    const notifications = await response.json();
+                    alert(`You have ${notifications.length} notifications.`);
+                    // Display notifications dynamically, e.g., in a modal or notification area
+                } else {
+                    alert("Failed to load notifications.");
+                }
+            } catch (error) {
+                console.error("Error loading notifications:", error);
+                alert("Could not load notifications.");
+            }
+        }
+    
+        // Fetch API to report a user
+        async function reportUser() {
+            const reportData = {
+                reportadoId: prompt("Enter the user ID to report:"),
+                tipo: "inappropriate",
+                descripcion: "Inappropriate behavior detected"
+            };
+            try {
+                const response = await fetch('/api/reporte', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(reportData)
+                });
+                if (response.ok) {
+                    alert("User reported successfully.");
+                } else {
+                    alert("Failed to report the user.");
+                }
+            } catch (error) {
+                console.error("Error reporting user:", error);
+                alert("Could not report user. Try again later.");
+            }
+        }
+    </script>
+    
+
+</body>
+</html>

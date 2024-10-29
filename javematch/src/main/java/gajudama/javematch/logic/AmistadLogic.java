@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.AmistadRepository;
 import gajudama.javematch.model.Amistad;
+import jakarta.transaction.Transactional;
 
 @Service
 public class AmistadLogic {
@@ -14,6 +15,7 @@ public class AmistadLogic {
     @Autowired
     private AmistadRepository amistadRepository;
 
+    @Transactional
     public Amistad createAmistad(Amistad amistad) {
         return amistadRepository.save(amistad);
     }
@@ -22,6 +24,7 @@ public class AmistadLogic {
         return amistadRepository.findById(id);
     }
 
+    @Transactional
     public Amistad updateAmistad(Long id, Amistad amistadDetails) {
         return amistadRepository.findById(id).map(amistad -> {
             amistad.setAmigoUsuario(amistadDetails.getAmigoUsuario());
@@ -30,7 +33,11 @@ public class AmistadLogic {
         }).orElseThrow(() -> new RuntimeException("Amistad not found"));
     }
 
+    @Transactional
     public void deleteAmistad(Long id) {
+        if (!amistadRepository.existsById(id)) {
+            throw new RuntimeException("Amistad not found");
+        }
         amistadRepository.deleteById(id);
     }
 

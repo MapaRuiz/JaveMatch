@@ -8,12 +8,15 @@ import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.NotificacionRepository;
 import gajudama.javematch.model.Notificacion;
+import gajudama.javematch.model.Usuario;
+import jakarta.transaction.Transactional;
 
 @Service
 public class NotificacionLogic {
     @Autowired
     private NotificacionRepository notificacionRepository;
 
+    @Transactional
     public Notificacion createNotificacion(Notificacion notificacion) {
         return notificacionRepository.save(notificacion);
     }
@@ -22,6 +25,7 @@ public class NotificacionLogic {
         return notificacionRepository.findById(id);
     }
 
+    @Transactional
     public Notificacion updateNotificacion(Long id, Notificacion notificacionDetails) {
         return notificacionRepository.findById(id).map(notificacion -> {
             notificacion.setEstadoLectura(notificacionDetails.getEstadoLectura());
@@ -32,12 +36,28 @@ public class NotificacionLogic {
         }).orElseThrow(() -> new RuntimeException("Notificacion not found"));
     }
 
+    @Transactional
     public void deleteNotificacion(Long id) {
         notificacionRepository.deleteById(id);
     }
 
     public List<Notificacion> getAllNotificaciones() {
         return notificacionRepository.findAll();
+    }
+    
+    @Autowired
+    private UsuarioLogic usuarioLogic;
+
+    @Transactional
+    public void sendNotification(Long usuarioId, String mensaje, boolean isRead) {
+        Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Notificacion notificacion = new Notificacion();
+        notificacion.setUsuarioNotificado(usuario);
+        notificacion.setMensaje(mensaje);
+        notificacion.setEstadoLectura(isRead);
+        notificacionRepository.save(notificacion);
     }
     
 }

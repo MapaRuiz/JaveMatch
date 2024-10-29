@@ -7,39 +7,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.model.Usuario;
+import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioLogic {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Create a new Usuario
+    @Transactional
     public Usuario createUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
     }
 
-    // Read a Usuario by ID
     public Optional<Usuario> getUsuarioById(Long id) {
         return usuarioRepository.findById(id);
     }
 
-    // Update a Usuario
+    @Transactional
     public Usuario updateUsuario(Long id, Usuario usuarioDetails) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setNombre(usuarioDetails.getNombre());
             usuario.setCorreo(usuarioDetails.getCorreo());
             usuario.setPlan(usuarioDetails.getPlan());
-            // Update other fields as necessary
             return usuarioRepository.save(usuario);
         }).orElseThrow(() -> new RuntimeException("Usuario not found"));
     }
 
-    // Delete a Usuario
+    @Transactional
     public void deleteUsuario(Long id) {
         usuarioRepository.deleteById(id);
     }
 
-    // List all Usuarios
     public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
