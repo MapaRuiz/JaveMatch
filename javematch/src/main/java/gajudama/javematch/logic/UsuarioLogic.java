@@ -123,8 +123,8 @@ public class UsuarioLogic {
         return usuarioRepository.save(usuario);
     }
 
-    public Optional<Usuario> loginUsuario(String email, String password) {
-        return usuarioRepository.findByEmailAndPassword(email, password);
+    public Optional<Usuario> loginUsuario(String correo) {
+        return usuarioRepository.findByCorreo(correo);
     }
 
     @Transactional

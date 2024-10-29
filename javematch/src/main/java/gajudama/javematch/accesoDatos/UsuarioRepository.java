@@ -11,7 +11,7 @@ import gajudama.javematch.model.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Optional<Usuario> findByEmailAndPassword(String email, String password);
+    Optional<Usuario> findByCorreo(String correo);
 
     List<Usuario> findByInteresesIn(List<Interes> intereses);
 }

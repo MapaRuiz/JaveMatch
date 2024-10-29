@@ -30,5 +30,5 @@ public class Reporte {
     private Date fechaRep;  // Date and time of the report
 
     @ManyToOne
-    private Videollamada videollamada;  // Optional videollamada related to the report
+    private Videollamada videollamada_Reports;  // Optional videollamada related to the report
 }

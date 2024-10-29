@@ -31,14 +31,14 @@ public class Videollamada {
     @ManyToMany
     @JoinTable(
         name = "videollamada_juego",
-        joinColumns = @JoinColumn(name = "videollamada_id"),
-        inverseJoinColumns = @JoinColumn(name = "juego_id")
+        joinColumns = @JoinColumn(name = "Videollamada_id"),
+        inverseJoinColumns = @JoinColumn(name = "Juego_id")
     )
     private List<Juego> juegos;
 
     @OneToMany(mappedBy = "videollamada_Match")
     private List<UserMatch> matches;  // Matches linked to this Videollamada
 
-    @OneToMany(mappedBy = "videollamada")
+    @OneToMany(mappedBy = "videollamada_Reports")
     private List<Reporte> reportes;  // Reports linked to this Videollamada
 }

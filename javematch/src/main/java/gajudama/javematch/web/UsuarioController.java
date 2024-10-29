@@ -61,8 +61,8 @@ public class UsuarioController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Usuario> loginUsuario(@RequestParam String email, @RequestParam String password) {
-        return usuarioLogic.loginUsuario(email, password)
+    public ResponseEntity<Usuario> loginUsuario(@RequestParam String email) {
+        return usuarioLogic.loginUsuario(email)
             .map(usuario -> new ResponseEntity<>(usuario, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.UNAUTHORIZED));
     }

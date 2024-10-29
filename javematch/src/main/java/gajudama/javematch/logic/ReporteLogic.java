@@ -31,7 +31,7 @@ public class ReporteLogic {
             reporte.setTipo(reporteDetails.getTipo());
             reporte.setDescripcion(reporteDetails.getDescripcion());
             reporte.setFechaRep(reporteDetails.getFechaRep());
-            reporte.setVideollamada(reporteDetails.getVideollamada());
+            reporte.setVideollamada_Reports(reporteDetails.getVideollamada_Reports());
             return reporteRepository.save(reporte);
         }).orElseThrow(() -> new RuntimeException("Reporte not found"));
     }
@@ -64,7 +64,7 @@ public class ReporteLogic {
         reporte.setReportado(reportado);
         reporte.setTipo(tipo);
         reporte.setDescripcion(descripcion);
-        reporte.setVideollamada(videollamada);
+        reporte.setVideollamada_Reports(videollamada);
         return reporteRepository.save(reporte);
     }
 }
