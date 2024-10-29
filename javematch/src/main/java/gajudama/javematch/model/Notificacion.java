@@ -15,7 +15,7 @@ import lombok.Data;
 public class Notificacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Notificacion_id;
 
     private String mensaje;
 

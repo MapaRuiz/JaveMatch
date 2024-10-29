@@ -16,7 +16,7 @@ public class UserMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long UserMatch_id;
 
     @ManyToOne
     private Usuario user1;  // First user in the match

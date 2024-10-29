@@ -15,7 +15,7 @@ import lombok.Data;
 public class UserLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long UserLike_id;
 
     @ManyToOne
     private Usuario usuarioLike;  // User who gives the like

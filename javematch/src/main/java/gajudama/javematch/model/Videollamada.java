@@ -19,7 +19,7 @@ import lombok.Data;
 public class Videollamada {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Videollamada_id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaVideollamada;

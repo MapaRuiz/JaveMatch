@@ -15,7 +15,7 @@ import lombok.Data;
 public class Rechazo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Rechazo_id;
 
     @ManyToOne
     private Usuario usuarioRechazo;  // User who gives the rejection

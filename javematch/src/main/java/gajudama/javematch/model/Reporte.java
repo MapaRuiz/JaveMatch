@@ -15,7 +15,7 @@ import lombok.Data;
 public class Reporte {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Reporte_id;
 
     @ManyToOne
     private Usuario autor;  // The user who created the report

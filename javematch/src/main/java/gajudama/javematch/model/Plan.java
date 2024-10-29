@@ -13,7 +13,7 @@ import lombok.Data;
 public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long Plan_id;
 
     private String nombre;  // Plan name
     private Integer maxLikes;  // Max likes allowed for this plan
