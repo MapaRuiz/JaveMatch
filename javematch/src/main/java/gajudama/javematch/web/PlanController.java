@@ -3,29 +3,48 @@ package gajudama.javematch.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
-import gajudama.javematch.logic.UsuarioLogic;
+import org.springframework.web.bind.annotation.*;
+import gajudama.javematch.logic.PlanLogic;
 import gajudama.javematch.model.Plan;
-import gajudama.javematch.model.Usuario;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/plan")
 public class PlanController {
-    @Autowired
-    private UsuarioLogic usuarioLogic;
 
-    @PostMapping("/upgrade")
-    public ResponseEntity<Usuario> upgradePlan(@RequestParam Long usuarioId, @RequestBody Plan newPlan) {
-        Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
-            .orElseThrow(() -> new RuntimeException("Usuario not found"));
-        usuario.setPlan(newPlan);
-        Usuario updatedUsuario = usuarioLogic.updateUsuario(usuarioId, usuario);
-        return new ResponseEntity<>(updatedUsuario, HttpStatus.OK);
+    @Autowired
+    private PlanLogic planLogic;
+
+    @PostMapping
+    public ResponseEntity<Plan> createPlan(@RequestBody Plan plan) {
+        Plan newPlan = planLogic.createPlan(plan);
+        return new ResponseEntity<>(newPlan, HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Plan> getPlanById(@PathVariable Long id) {
+        return planLogic.getPlansById(id)
+            .map(plan -> new ResponseEntity<>(plan, HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Plan> updatePlan(@PathVariable Long id, @RequestBody Plan planDetails) {
+        Plan updatedPlan = planLogic.updatePlan(id, planDetails);
+        return new ResponseEntity<>(updatedPlan, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePlan(@PathVariable Long id) {
+        planLogic.deletePlan(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Plan>> getAllPlanes() {
+        List<Plan> planes = planLogic.getAllPlanes();
+        return new ResponseEntity<>(planes, HttpStatus.OK);
+    }
+    
 }
