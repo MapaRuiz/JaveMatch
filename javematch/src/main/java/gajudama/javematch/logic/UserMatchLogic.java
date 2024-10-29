@@ -3,6 +3,7 @@ package gajudama.javematch.logic;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,32 @@ public class UserMatchLogic {
         usuarioLogic.updateMatchesAsUser2(likedUsuarioId, likedUsuario.getMatchesAsUser2());
 
         return matchRepository.save(userMatch);
+    }
+
+    @Transactional
+    public UserMatch randomMatch(Long usuarioId) {
+        Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        List<Usuario> allUsuarios = usuarioLogic.getAllUsuarios();
+        allUsuarios.remove(usuario); // Remove the current user from the list
+
+        if (allUsuarios.isEmpty()) {
+            throw new RuntimeException("No other users available for matching");
+        }
+
+        // Find users with matching interests
+        List<Usuario> matchingUsuarios = usuarioLogic.findUsersWithMatchingInterests(usuarioId);
+
+        Usuario selectedUsuario;
+        if (!matchingUsuarios.isEmpty()) {
+            // Prioritize users with matching interests
+            selectedUsuario = matchingUsuarios.get(new Random().nextInt(matchingUsuarios.size()));
+        } else {
+            // If no matching interests, select randomly from all users
+            selectedUsuario = allUsuarios.get(new Random().nextInt(allUsuarios.size()));
+        }
+
+        return createMatch(usuarioId, selectedUsuario.getUser_id());
     }
     
 }

@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.model.Amistad;
+import gajudama.javematch.model.Interes;
+import gajudama.javematch.model.Plan;
+import gajudama.javematch.model.Rechazo;
 import gajudama.javematch.model.UserLike;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Usuario;
@@ -94,6 +97,23 @@ public class UsuarioLogic {
         }).orElseThrow(() -> new RuntimeException("Usuario not found"));
 
     }
+
+    @Transactional
+    public Usuario updateRejectionsGiven(Long id, List<Rechazo> usuarioRechazo) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setRejectionsGiven(usuarioRechazo);
+            return usuarioRepository.save(usuario);
+        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
+    }
+
+    @Transactional
+    public Usuario updateRejectionsReceived(Long id, List<Rechazo> rechazoUsuario) {
+        return usuarioRepository.findById(id).map(usuario -> {
+            usuario.setRejectionsReceived(rechazoUsuario);
+            return usuarioRepository.save(usuario);
+        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
+
+    }
     
     @Transactional
     public Usuario registerUsuario(Usuario usuario) {
@@ -105,6 +125,31 @@ public class UsuarioLogic {
 
     public Optional<Usuario> loginUsuario(String email, String password) {
         return usuarioRepository.findByEmailAndPassword(email, password);
+    }
+
+    @Transactional
+    public Usuario upgradePlan(Long usuarioId, Plan newPlan) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        usuario.setPlan(newPlan);
+        return usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public Usuario addInteres(Long usuarioId, Interes interes) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        usuario.getIntereses().add(interes);
+        return usuarioRepository.save(usuario);
+    }
+
+    public List<Usuario> findUsersWithMatchingInterests(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return usuarioRepository.findByInteresesIn(usuario.getIntereses());
     }
     
 }

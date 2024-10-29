@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.ReporteRepository;
 import gajudama.javematch.model.Reporte;
+import gajudama.javematch.model.Usuario;
+import gajudama.javematch.model.Videollamada;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -43,4 +45,26 @@ public class ReporteLogic {
         return reporteRepository.findAll();
     }
 
+    @Autowired
+    private UsuarioLogic usuarioLogic;
+    @Autowired
+    private VideollamadaLogic videollamadaLogic;
+
+    @Transactional
+    public Reporte createReport(Long autorId, Long reportadoId, String tipo, String descripcion, Long videollamadaId) {
+        Usuario autor = usuarioLogic.getUsuarioById(autorId)
+            .orElseThrow(() -> new RuntimeException("Author not found"));
+        Usuario reportado = usuarioLogic.getUsuarioById(reportadoId)
+            .orElseThrow(() -> new RuntimeException("Reported user not found"));
+        Videollamada videollamada = videollamadaLogic.getVideollamadaById(videollamadaId)
+            .orElseThrow(() -> new RuntimeException("Videollamada not found"));
+
+        Reporte reporte = new Reporte();
+        reporte.setAutor(autor);
+        reporte.setReportado(reportado);
+        reporte.setTipo(tipo);
+        reporte.setDescripcion(descripcion);
+        reporte.setVideollamada(videollamada);
+        return reporteRepository.save(reporte);
+    }
 }
