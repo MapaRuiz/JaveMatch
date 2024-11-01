@@ -15,6 +15,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UserMatchLogic {
+    
     @Autowired
     private UserMatchRepository matchRepository;
 
@@ -67,12 +68,10 @@ public class UserMatchLogic {
         userMatch.setAmistad(false);
 
         Videollamada videollamada = videollamadaLogic.createVideollamada(userMatch);
-        // Enviar solicitud de amistad tras la videollamada
         notificacionLogic.sendFriendRequestNotification(usuarioId, likedUsuarioId);
 
         userMatch.setVideollamada_Match(videollamada);
         
-        // Update user's matches
         usuario.getMatchesAsUser1().add(userMatch);
         likedUsuario.getMatchesAsUser2().add(userMatch);
         usuarioLogic.updateMatchesAsUser1(usuarioId, usuario.getMatchesAsUser1());
@@ -81,30 +80,36 @@ public class UserMatchLogic {
         return matchRepository.save(userMatch);
     }
 
+    // **Emparejamiento al azar**. Selecciona al azar otro usuario con prioridad a los intereses en común.
     @Transactional
     public UserMatch randomMatch(Long usuarioId) {
+        
+        // Verificación de existencia del usuario en el sistema
         Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
             .orElseThrow(() -> new RuntimeException("User not found"));
-        List<Usuario> allUsuarios = usuarioLogic.getAllUsuarios();
-        allUsuarios.remove(usuario); // Remove the current user from the list
 
+        // Obtener todos los usuarios excepto el actual
+        List<Usuario> allUsuarios = usuarioLogic.getAllUsuarios();
+        allUsuarios.remove(usuario);
+
+        // En caso de no haber otros usuarios disponibles, se lanza un error
         if (allUsuarios.isEmpty()) {
             throw new RuntimeException("No other users available for matching");
         }
 
-        // Find users with matching interests
+        // Filtra usuarios con intereses comunes, si existen
         List<Usuario> matchingUsuarios = usuarioLogic.findUsersWithMatchingInterests(usuarioId);
 
         Usuario selectedUsuario;
         if (!matchingUsuarios.isEmpty()) {
-            // Prioritize users with matching interests
+            // Selecciona aleatoriamente entre los usuarios con intereses comunes
             selectedUsuario = matchingUsuarios.get(new Random().nextInt(matchingUsuarios.size()));
         } else {
-            // If no matching interests, select randomly from all users
+            // Si no hay coincidencias de intereses, selecciona aleatoriamente de todos los usuarios disponibles
             selectedUsuario = allUsuarios.get(new Random().nextInt(allUsuarios.size()));
         }
 
+        // Crea y retorna el emparejamiento con el usuario seleccionado
         return createMatch(usuarioId, selectedUsuario.getUser_id());
     }
-    
 }
