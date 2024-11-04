@@ -3,71 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javeriana Social Network</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>JaveMatch</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>JaveMatch</h1>
+        <div class="logo">
+            <h1>JaveMatch</h1>
+        </div>
         <nav>
             <ul>
-                <li><a href="#profile">Profile</a></li>
-                <li><a href="#matches">Matches</a></li>
-                <li><a href="#random-match">Random Match</a></li>
-                <li><a href="#notifications">Notifications</a></li>
+                <li><a href="#profile">Perfiles</a></li>
+                <li><a href="#notif">Notificaciones</a></li>
             </ul>
         </nav>
     </header>
     
     <main>
         <section id="profile">
-            <h2>Profile</h2>
+            <h2>Perfil</h2>
             <form id="profile-form">
-                <label for="name">Name:</label>
+                <label for="name">Nombre:</label>
                 <input type="text" id="name" name="name" required>
                 
                 <label for="email">Email:</label>
                 <input type="email" id="email" name="email" required>
                 
-                <label for="interests">Interests:</label>
+                <label for="interests">Intereses:</label>
                 <input type="text" id="interests" name="interests" required>
                 
                 <label for="plan">Plan:</label>
                 <select id="plan" name="plan">
-                    <option value="bronze">Bronze</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
+                    <option value="bronze">Bronce</option>
+                    <option value="silver">Plata</option>
+                    <option value="gold">Oro</option>
                 </select>
                 
-                <button type="submit">Update Profile</button>
+                <button type="submit">Actualizar Perfil</button>
+                <button type="button" id="add-user-btn">Añadir Usuario</button>
             </form>
-        </section>
-        
-        <section id="matches">
-            <h2>Matches</h2>
-            <div id="matches-list">
-                <!-- Matches will be dynamically loaded here -->
+
+            <!-- Nueva sección para buscar usuario -->
+            <div class="user-search">
+                <label for="search-email">Buscar Usuario por Email:</label>
+                <input type="email" id="search-email" name="search-email" placeholder="Ingresa el correo del usuario">
+                <button id="search-user-btn">Buscar Usuario</button>
             </div>
-        </section>
-        
-        <section id="random-match">
-            <h2>Random Match</h2>
-            <button id="random-match-btn">Find Random Match</button>
-            <div id="random-match-result">
-                <!-- Random match result will be displayed here -->
+
+            <div id="user-info" style="display: none;">
+                <h3>Información del Usuario</h3>
+                <label for="user-name">Nombre:</label>
+                <input type="text" id="user-name" name="user-name" disabled>
+                
+                <label for="user-email">Email:</label>
+                <input type="email" id="user-email" name="user-email" disabled>
+                
+                <label for="user-interests">Intereses:</label>
+                <input type="text" id="user-interests" name="user-interests" disabled>
+                
+                <button id="update-user-btn">Actualizar Información</button>
             </div>
+            <!-- Fin de nueva sección -->
         </section>
         
-        <section id="notifications">
-            <h2>Notifications</h2>
-            <div id="notifications-list">
-                <!-- Notifications will be dynamically loaded here -->
+        <section id="match">
+            <h2>Match</h2>
+            <button id="match-btn">Buscar Match Aleatorio</button>
+            <div id="match-result">
             </div>
         </section>
     </main>
     
     <footer>
-        <p>&copy; 2023 Jave Social Network. All rights reserved.</p>
+        <p>&copy; 2023 JaveMatch. Todos los derechos reservados.</p>
     </footer>
 
     <script src="scripts.js"></script>
