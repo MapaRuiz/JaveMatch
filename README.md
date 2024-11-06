@@ -1,5 +1,5 @@
-<h1 align="center">Hi 👋, I'm Mapa Ruiz</h1>
-<h3 align="center">A passionate systems engineer from Colombia</h3>
+<h1 align="center">Hi 👋, we are JavEngineering</h1>
+<h3 align="center">A passionate systems engineering team from Colombia</h3>
 
 # JaveMatch
 📄 - Final proyect.

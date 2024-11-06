@@ -3,66 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javeriana Social Network</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>JaveMatch</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <h1>JaveMatch</h1>
+        <h1>Bienvenido a JaveMatch</h1>
         <nav>
             <ul>
-                <li><a href="#profile">Profile</a></li>
-                <li><a href="#matches">Matches</a></li>
-                <li><a href="#random-match">Random Match</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="#matches">Match</a></li>
+                <li><a href="notificaciones.html">Notificaciones</a></li>
             </ul>
         </nav>
     </header>
-    
+
     <main>
-        <section id="profile">
-            <h2>Profile</h2>
+        <section>
+            <h2>Perfil</h2>
             <form id="profile-form">
-                <label for="name">Name:</label>
+                <label for="name">Nombre:</label>
                 <input type="text" id="name" name="name" required>
-                
-                <label for="email">Email:</label>
+
+                <label for="email">Correo:</label>
                 <input type="email" id="email" name="email" required>
-                
-                <label for="interests">Interests:</label>
+
+                <label for="interests">Intereses (separados por comas):</label>
                 <input type="text" id="interests" name="interests" required>
-                
+
                 <label for="plan">Plan:</label>
-                <select id="plan" name="plan">
-                    <option value="bronze">Bronze</option>
-                    <option value="silver">Silver</option>
-                    <option value="gold">Gold</option>
-                </select>
-                
-                <button type="submit">Update Profile</button>
+                <input type="text" id="plan" name="plan" required>
+
+                <button type="submit">Actualizar Perfil</button>
             </form>
         </section>
-        
-        <section id="matches">
-            <h2>Matches</h2>
-            <div id="matches-list">
-                <!-- Matches will be dynamically loaded here -->
-            </div>
-        </section>
-        
-        <section id="random-match">
+
+        <section>
             <h2>Random Match</h2>
-            <button id="random-match-btn">Find Random Match</button>
-            <div id="random-match-result">
-                <!-- Random match result will be displayed here -->
+            <button id="random-match-btn">Encontrar Match Aleatorio</button>
+            <div id="random-match-result"></div>
+        </section>
+
+        <section>
+            <h2>Lista de Matches</h2>
+            <div id="matches-list">
+                <!-- Aquí se cargarán los matches dinámicamente -->
             </div>
         </section>
-        
     </main>
-    
+
     <footer>
-        <p>&copy; 2024 JaveMatch. All rights reserved.</p>
+        <p>&copy; 2023 JaveMatch. Todos los derechos reservados.</p>
     </footer>
 
+    <!-- Cargar solo el script necesario para esta página -->
     <script src="scripts.js"></script>
 </body>
 </html>
