@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAVEMATCH - Videollamada</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="match.html">Match</a>
+            <a href="videollamada.html">Videollamada</a>
+            <a href="perfil.html">Perfil</a>
+        </nav>
+    </header>
+    <main>
+        <!-- Sección de Videollamadas -->
+        <section id="videocall-section">
+            <h1>Videollamadas</h1>
+            <p class="section-subtitle">BUSCA TU VIDEOLLAMADA</p>
+            <label for="videoCallId">ID DE LA VIDEOLLAMADA</label>
+            <input type="text" id="videoCallId" placeholder="ID de la videollamada">
+            <div class="button-group-right">
+                <button id="searchVideoCall" class="btn-primary">Buscar</button>
+            </div>
+            <div id="videocallResult" class="data-box">
+                <!-- Aquí se mostrará el resultado de la videollamada en formato JSON o como desees mostrarlo -->
+            </div>
+        </section>
+
+        <!-- Sección de Juegos -->
+        <section id="games-section">
+            <h2>Juegos</h2>
+            <p class="section-subtitle">AÑADE JUEGOS A TU VIDEOLLAMADA</p>
+            <label for="gameName">NOMBRE</label>
+            <input type="text" id="gameName" placeholder="Nombre del juego">
+            <div class="button-group-right">
+                <button id="addGame" class="btn-primary">Añadir</button>
+            </div>
+        </section>
+
+        <!-- Sección de Reportes -->
+        <section id="report-section">
+            <h2>Reportes</h2>
+            <p class="section-subtitle">GENERA UN NUEVO REPORTE SOBRE UNA VIDEOLLAMADA</p>
+            <label for="reportType">TIPO</label>
+            <input type="text" id="reportType" placeholder="Tipo">
+            <label for="reportDescription">DESCRIPCION</label>
+            <input type="text" id="reportDescription" placeholder="Descripción">
+            <div class="button-group-right">
+                <button id="submitReport" class="btn-primary">Reportar</button>
+            </div>
+        </section>
+    </main>
+    <script src="scripts.js"></script>
+</body>
+</html>

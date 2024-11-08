@@ -1,62 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JaveMatch</title>
-    <link rel="stylesheet" href="style.css">
+    <title>JAVEMATCH - Registrarse</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Bienvenido a JaveMatch</h1>
         <nav>
-            <ul>
-                <li><a href="perfil.html">Perfil</a></li>
-                <li><a href="#matches">Match</a></li>
-                <li><a href="notificaciones.html">Notificaciones</a></li>
-            </ul>
+            <a href="index.html">Inicio</a>
+            <a href="match.html">Match</a>
+            <a href="videollamada.html">Videollamada</a>
+            <a href="perfil.html">Perfil</a>
         </nav>
     </header>
-
     <main>
-        <section>
-            <h2>Perfil</h2>
-            <form id="profile-form">
-                <label for="name">Nombre:</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="email">Correo:</label>
-                <input type="email" id="email" name="email" required>
-
-                <label for="interests">Intereses (separados por comas):</label>
-                <input type="text" id="interests" name="interests" required>
-
-                <label for="plan">Plan:</label>
-                <input type="text" id="plan" name="plan" required>
-
-                <button type="submit">Actualizar Perfil</button>
-            </form>
-        </section>
-
-        <section>
-            <h2>Random Match</h2>
-            <button id="random-match-btn">Encontrar Match Aleatorio</button>
-            <div id="random-match-result"></div>
-        </section>
-
-        <section>
-            <h2>Lista de Matches</h2>
-            <div id="matches-list">
-                <!-- Aquí se cargarán los matches dinámicamente -->
+        <h1>¡Regístrate en JAVEMATCH!</h1>
+        <p class="subtext">¿Ya estás registrado? <a href="login.html">Haz login</a></p>
+        <form id="registerForm">
+            <label for="name">NOMBRE</label>
+            <input type="text" id="name" name="nombre" placeholder="Escribe tu nombre" required>
+            
+            <label for="email">EMAIL</label>
+            <input type="email" id="email" name="email" placeholder="ejemplo@javeriana.edu.co" pattern=".+@javeriana.edu.co" required>
+            
+            <label>SELECCIONE 3 INTERESES PRINCIPALES</label>
+            <div id="interests">
+                <label><input type="checkbox" name="intereses" value="Deportes"> Deportes</label>
+                <label><input type="checkbox" name="intereses" value="Música"> Música</label>
+                <label><input type="checkbox" name="intereses" value="Videojuegos"> Videojuegos</label>
+                <label><input type="checkbox" name="intereses" value="Baile"> Baile</label>
+                <label><input type="checkbox" name="intereses" value="Lectura"> Lectura y/o escritura</label>
             </div>
-        </section>
+            
+            <label for="plan">PLAN</label>
+            <select id="plan" name="plan" required>
+                <option value="" disabled selected>Select</option>
+                <option value="bronze">Bronze</option>
+                <option value="silver">Silver</option>
+                <option value="gold">Gold</option>
+            </select>
+            
+            <button type="submit" class="btn-primary">Sign Up</button>
+        </form>
     </main>
-
-    <footer>
-        <p>&copy; 2023 JaveMatch. Todos los derechos reservados.</p>
-    </footer>
-
-    <!-- Cargar solo el script necesario para esta página -->
     <script src="scripts.js"></script>
 </body>
 </html>

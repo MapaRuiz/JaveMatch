@@ -1,36 +1,72 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfiles - JaveMatch</title>
-    <link rel="stylesheet" href="style.css">
+    <title>JAVEMATCH - Perfil</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Perfiles en JaveMatch</h1>
         <nav>
-            <ul>
-                <li><a href="index.html">Inicio</a></li>
-                <li><a href="#matches">Match</a></li>
-                <li><a href="notificaciones.html">Notificaciones</a></li>
-            </ul>
+            <a href="index.html">Inicio</a>
+            <a href="match.html">Match</a>
+            <a href="videollamada.html">Videollamada</a>
+            <a href="perfil.html">Perfil</a>
         </nav>
     </header>
-
     <main>
-        <section>
-            <h2>Lista de Perfiles</h2>
-            <div id="perfil-list">
-                <!-- Aquí se cargarán los perfiles dinámicamente -->
+        <!-- Sección de Perfil -->
+        <section id="profile-section">
+            <h1>Perfil</h1>
+            <p class="section-subtitle">MIRA TU PERFIL!!</p>
+            <div id="profileData" class="data-box">
+                <!-- Aquí se mostrará la información del perfil en formato JSON -->
+            </div>
+            <div class="button-group-right">
+                <button id="viewProfile" class="btn-primary">Buscar</button>
+            </div>
+        </section>
+
+        <!-- Sección de Intereses -->
+        <section id="interests-section">
+            <h2>Intereses</h2>
+            <p class="section-subtitle">AÑADE NUEVOS INTERESES</p>
+            <label for="newInterest">INTERES</label>
+            <input type="text" id="newInterest" placeholder="Nuevo Interés">
+            <div class="button-group-right">
+                <button id="addInterest" class="btn-primary">Añadir</button>
+            </div>
+        </section>
+
+        <!-- Sección de Plan -->
+        <section id="plan-section">
+            <h2>Plan</h2>
+            <p class="section-subtitle">ACTUALIZA TU PLAN!!</p>
+            <label for="updatePlan">PLAN</label>
+            <select id="updatePlan">
+                <option value="" disabled selected>Selecciona tu plan</option>
+                <option value="bronze">Bronze</option>
+                <option value="silver">Silver</option>
+                <option value="gold">Gold</option>
+            </select>
+            <div class="button-group-right">
+                <button id="updatePlanBtn" class="btn-primary">Actualizar</button>
+            </div>
+        </section>
+
+        <!-- Sección de Notificaciones -->
+        <section id="notifications-section">
+            <h2>Notificaciones</h2>
+            <p class="section-subtitle">REVISA TUS NUEVAS NOTIFICACIONES!!</p>
+            <div id="notificationsData" class="data-box">
+                <!-- Aquí se mostrarán las notificaciones en formato JSON -->
+            </div>
+            <div class="button-group-right">
+                <button id="updateNotifications" class="btn-primary">Actualizar Notificaciones</button>
             </div>
         </section>
     </main>
-
-    <footer>
-        <p>&copy; 2023 JaveMatch. Todos los derechos reservados.</p>
-    </footer>
-
-    <script src="perfil.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ package gajudama.javematch.logic;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -150,6 +151,15 @@ public class UsuarioLogic {
             .orElseThrow(() -> new RuntimeException("User not found"));
 
         return usuarioRepository.findByInteresesIn(usuario.getIntereses());
+    }
+
+    public Usuario getRandomUsuario() {
+        List<Usuario> usuarios = usuarioRepository.findAll(); // Obtener todos los usuarios
+        if (usuarios.isEmpty()) {
+            return null; // Retornar null si no hay usuarios
+        }
+        Random rand = new Random();
+        return usuarios.get(rand.nextInt(usuarios.size())); // Seleccionar un usuario aleatorio
     }
     
 }

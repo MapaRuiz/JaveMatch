@@ -1,0 +1,142 @@
+/* Reset some basic styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+header {
+    width: 100%;
+    background-color: #ff4a4a;
+    padding: 10px 0;
+    display: flex;
+    justify-content: center;
+}
+
+nav a {
+    color: #fff;
+    margin: 0 20px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+main {
+    width: 600px; /* Ancho fijo para todas las páginas */
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+h1, h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #000;
+}
+
+/* Mini títulos alineados a la izquierda en index.html */
+label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    text-align: left;
+    display: block;
+    margin-bottom: 5px;
+}
+
+/* Subtítulos para secciones específicas */
+.section-subtitle {
+    font-size: 12px;
+    font-weight: bold;
+    color: #555;
+    text-transform: uppercase;
+    margin: 15px 0 10px;
+    text-align: left;
+}
+
+/* Estilo para los cuadros de entrada de texto */
+input[type="text"],
+input[type="email"],
+select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin-bottom: 15px;
+}
+
+/* Campo de texto en Amistad para que sea editable y consistente */
+input[type="text"]#friendName {
+    background-color: #f9f9f9;
+    color: #333;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+/* Contenedores de datos para match.html */
+.data-box {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    text-align: left;
+    width: 100%;
+}
+
+/* Botón principal reutilizable */
+.btn-primary {
+    background-color: #000;
+    color: #fff;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 15px; /* Más espacio debajo de los botones */
+}
+
+.btn-primary:hover {
+    background-color: #333;
+}
+
+select {
+    background-color: #f9f9f9;
+}
+
+/* Grupo de botones alineados al centro o a la derecha */
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.button-group-right {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+button {
+    margin-top: 10px;
+}

@@ -87,4 +87,14 @@ public class UsuarioController {
         List<Usuario> usuarios = usuarioLogic.findUsersWithMatchingInterests(usuarioId);
         return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
+
+    @GetMapping("/random")
+    public ResponseEntity<Usuario> getRandomUsuario() {
+    Usuario randomUsuario = usuarioLogic.getRandomUsuario();
+    if (randomUsuario != null) {
+        return new ResponseEntity<>(randomUsuario, HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+}
 }
