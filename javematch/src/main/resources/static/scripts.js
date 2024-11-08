@@ -197,12 +197,19 @@ function initializeRegisterPage() {
     document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
         event.preventDefault();
 
+        if(document.getElementById('plan').value == "bronze"){
+            maxLikes=5;      
+        }else if(document.getElementById('plan').value == "silver"){
+            maxLikes =10;
+        }else if(document.getElementById('plan').value == "gold"){
+            maxLikes =15;
+        }
         // Construcción del objeto usuarioData con intereses y plan estructurados correctamente
         const usuarioData = {
             nombre: document.getElementById('name').value,
             correo: document.getElementById('email').value, // Cambiado a 'correo' para coincidir con el backend
-            intereses: Array.from(document.querySelectorAll('input[name="intereses"]:checked')).map(input => ({ nombre: input.value })), // Estructura correcta de intereses
-            plan: { nombre: document.getElementById('plan').value } // Plan como objeto con el nombre
+            intereses: List.from(document.querySelectorAll('input[name="intereses"]:checked')).map(input => ({ nombre: input.value })), // Estructura correcta de intereses
+            plan: { nombre: document.getElementById('plan').value, maxLikes: maxLikes} // Plan como objeto con el nombre
         };
 
         try {
