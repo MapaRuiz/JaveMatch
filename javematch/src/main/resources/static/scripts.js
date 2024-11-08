@@ -232,8 +232,8 @@ function initializeRegisterPage() {
 function initializeLoginPage() {
     document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const email = document.getElementById('email').value;
-        const usuario = await loginUsuario(email);
+        const correo = document.getElementById('email').value;
+        const usuario = await loginUsuario(correo);
         if (usuario) {
             alert('Login exitoso');
             localStorage.setItem('userId', usuario.id);  // Guardar el ID del usuario en localStorage
