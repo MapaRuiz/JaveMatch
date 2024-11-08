@@ -12,14 +12,18 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
         if (response.ok) {
             return await response.json();
         } else {
-            console.error('Error en la solicitud:', response.status);
+            const errorData = await response.json();
+            console.error('Error en la solicitud:', response.status, errorData);
+            alert(`Error en la solicitud: ${response.status}. Detalles: ${errorData.message || 'No especificado'}`);
             return null;
         }
     } catch (error) {
         console.error('Error de conexión:', error);
+        alert('Error de conexión. Inténtalo de nuevo.');
         return null;
     }
 }
+
 
 // ---- Funciones para index.html y login.html ---- //
 
@@ -192,21 +196,30 @@ async function confirmFriendship(matchId, isFriend) {
 function initializeRegisterPage() {
     document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
         event.preventDefault();
+
+        // Construcción del objeto usuarioData con intereses y plan estructurados correctamente
         const usuarioData = {
             nombre: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            intereses: Array.from(document.querySelectorAll('input[name="intereses"]:checked')).map(input => input.value),
-            plan: document.getElementById('plan').value
+            correo: document.getElementById('email').value, // Cambiado a 'correo' para coincidir con el backend
+            intereses: Array.from(document.querySelectorAll('input[name="intereses"]:checked')).map(input => ({ nombre: input.value })), // Estructura correcta de intereses
+            plan: { nombre: document.getElementById('plan').value } // Plan como objeto con el nombre
         };
-        const result = await registerUsuario(usuarioData);
-        if (result) {
-            alert('Usuario registrado con éxito');
-            window.location.href = 'login.html';
-        } else {
-            alert('Error al registrar el usuario');
+
+        try {
+            const result = await registerUsuario(usuarioData);
+            if (result) {
+                alert('Registro exitoso');
+                window.location.href = 'login.html';
+            } else {
+                alert('Error al registrar el usuario');
+            }
+        } catch (error) {
+            console.error('Error en el registro:', error);
+            alert('Error al registrar el usuario. Verifica los datos e inténtalo nuevamente.');
         }
     });
 }
+
 
 // Inicializar eventos para la página de login
 function initializeLoginPage() {

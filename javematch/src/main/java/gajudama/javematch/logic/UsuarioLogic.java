@@ -1,11 +1,15 @@
 package gajudama.javematch.logic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import gajudama.javematch.accesoDatos.InteresRepository;
+import gajudama.javematch.accesoDatos.PlanRepository;
 import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.model.Amistad;
 import gajudama.javematch.model.Interes;
@@ -115,12 +119,33 @@ public class UsuarioLogic {
         }).orElseThrow(() -> new RuntimeException("Usuario not found"));
 
     }
+
+    @Autowired
+    private PlanRepository PlanRepository;
+
+    @Autowired
+    private InteresRepository InteresRepository;
     
     @Transactional
     public Usuario registerUsuario(Usuario usuario) {
         if (!usuario.getCorreo().endsWith("@javeriana.edu.co")) {
             throw new IllegalArgumentException("El correo debe ser de dominio @javeriana.edu.co");
         }
+
+        // Asegurarse de que el plan existe o crearlo
+        Plan plan = PlanRepository.findById(usuario.getPlan().getPlan_id())
+                    .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
+        usuario.setPlan(plan);
+
+        // Procesar los intereses
+        List<Interes> processedIntereses = new ArrayList<>();
+        for (Interes interes : usuario.getIntereses()) {
+            Interes foundInteres = InteresRepository.findById(interes.getInteres_id())
+                                .orElse(InteresRepository.save(interes)); // Crear el interés si no existe
+            processedIntereses.add(foundInteres);
+        }
+        usuario.setIntereses(processedIntereses);
+
         return usuarioRepository.save(usuario);
     }
 
