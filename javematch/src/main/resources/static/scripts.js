@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', fetchUsers);
 
 // Cuando se hace click en "Aceptar"
 function acceptUser(likedUsuarioId) {
-    if (likedUsuarioId) {  // Asegúrate de que likedUsuarioId esté definido
+    if (likedUsuarioId) { 
         fetch(`/api/usermatch/accept/${likedUsuarioId}`, {
             method: 'POST',
         })

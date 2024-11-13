@@ -26,4 +26,11 @@ public class Interes {
     @ManyToMany(mappedBy = "intereses")
     @JsonIgnore
     private List<Usuario> usuarios;
+    @Override
+    public String toString() {
+        return "Interes{" +
+                "interesId=" + interesId +
+                ", nombre='" + nombre + '\'' +
+                '}';
+    }
 }

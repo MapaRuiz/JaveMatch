@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
@@ -71,6 +72,7 @@ public class Usuario {
         joinColumns = @JoinColumn(name = "usuario_id"),
         inverseJoinColumns = @JoinColumn(name = "interes_id")
     )   
+    @JsonIgnore
     private List<Interes> intereses = new ArrayList<>();
     
     // Notifications received by the user
@@ -81,4 +83,14 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "plan_id") 
     private Plan plan;
+
+    @Override
+public String toString() {
+    return "Usuario{" +
+           "id=" + User_id +
+           ", nombre='" + nombre + '\'' +
+           '}';
+    // No llamar a 'getPlanes()' aquí si 'Planes' contiene una referencia a 'Usuario'
+}
+
 }
