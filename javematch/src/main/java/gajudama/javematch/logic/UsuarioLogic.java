@@ -25,6 +25,7 @@ public class UsuarioLogic {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
     @Transactional
     public Usuario createUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
@@ -126,26 +127,41 @@ public class UsuarioLogic {
     @Autowired
     private InteresRepository InteresRepository;
     
-    @Transactional
+   @Transactional
     public Usuario registerUsuario(Usuario usuario) {
+        System.out.println("Comenzando el registro del usuario: " + usuario);
+
+        // Validar dominio del correo
         if (!usuario.getCorreo().endsWith("@javeriana.edu.co")) {
+            System.out.println("Error: El correo debe ser de dominio @javeriana.edu.co");
             throw new IllegalArgumentException("El correo debe ser de dominio @javeriana.edu.co");
         }
 
-        // Asegurarse de que el plan existe o crearlo
+        // Verificar y asignar el plan
+        System.out.println("Buscando plan con ID: " + usuario.getPlan().getPlan_id());
         Plan plan = PlanRepository.findById(usuario.getPlan().getPlan_id())
-                    .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
+                .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
         usuario.setPlan(plan);
+        System.out.println("Plan asignado correctamente: " + plan);
 
-        // Procesar los intereses
+        // Procesar y asignar los intereses del usuario
         List<Interes> processedIntereses = new ArrayList<>();
         for (Interes interes : usuario.getIntereses()) {
-            Interes foundInteres = InteresRepository.findById(interes.getInteres_id())
-                                .orElse(InteresRepository.save(interes)); // Crear el interés si no existe
-            processedIntereses.add(foundInteres);
+            System.out.println("Procesando interés: " + interes.getNombre());
+            Optional<Interes> foundInteres = InteresRepository.findByNombre(interes.getNombre());
+
+            if (foundInteres.isPresent()) {
+                processedIntereses.add(foundInteres.get());
+            } else {
+                // Si el interés no existe, guardarlo en la base de datos
+                processedIntereses.add(InteresRepository.save(interes));
+                System.out.println("Nuevo interés guardado: " + interes.getNombre());
+            }
         }
         usuario.setIntereses(processedIntereses);
 
+        // Guardar el usuario en el repositorio y devolverlo
+        System.out.println("Guardando el usuario: " + usuario);
         return usuarioRepository.save(usuario);
     }
 

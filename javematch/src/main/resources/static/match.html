@@ -16,49 +16,14 @@
         </nav>
     </header>
     <main>
-        <!-- Sección de Match -->
         <section id="match-section">
             <h1>Match</h1>
-            <p class="section-subtitle">MIRA TUS MATCH O CREA UNO NUEVO ALEATORIAMENTE!!</p>
-            <div id="match-list" class="data-box">
-                <!-- Aquí se mostrará la información de los matches en formato JSON -->
-            </div>
-            <div class="button-group-right">
-                <button id="viewMatches" class="btn-primary">Ver Mis Match</button>
-                <button id="randomMatch" class="btn-primary">Match Aleatorio</button>
-            </div>
-        </section>
-
-        <!-- Sección de Likes o Rechazos -->
-        <section id="like-reject-section">
-            <h2>Likes o Rechazos</h2>
-            <p class="section-subtitle">DALE LIKE O RECHAZA A UN NUEVO USUARIO</p>
-            <div id="randomUser" class="data-box">
-                <!-- Aquí se mostrará la información del usuario aleatorio en formato JSON -->
-            </div>
-            <div class="button-group-right">
-                <button id="reloadUser" class="btn-primary">Recargar Usuario</button>
-                <button id="likeUser" class="btn-primary">Dar Like</button>
-                <button id="rejectUser" class="btn-primary">Dar Rechazo</button>
-            </div>
-        </section>
-
-        <!-- Sección de Solicitudes de Amistad -->
-        <section id="friend-request-section">
-            <h2>Amistad</h2>
-            <p class="section-subtitle">ACEPTA O RECHAZA UNA SOLICITUD DE AMISTAD</p>
-            <!-- Campo editable sin 'disabled' para que el usuario pueda escribir en él -->
-            <label for="friendName">NOMBRE</label>
-            <input type="text" id="friendName" placeholder="Nombre del usuario">
-            <div class="button-group-right">
-                <button id="acceptFriendRequest" class="btn-primary">Aceptar</button>
-                <button id="rejectFriendRequest" class="btn-primary">Rechazar</button>
+            <p class="section-subtitle">MIRA LOS USUARIOS DISPONIBLES Y DALES LIKE O RECHAZO</p>
+            <div id="user-list" class="data-box">
+                <!-- Aquí se mostrará la información de los usuarios -->
             </div>
         </section>
     </main>
     <script src="scripts.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', initializePage);
-    </script>
 </body>
 </html>

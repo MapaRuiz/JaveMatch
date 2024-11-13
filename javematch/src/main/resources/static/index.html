@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JAVEMATCH - Registrarse</title>
+    <title>JAVEMATCH - Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,34 +16,14 @@
         </nav>
     </header>
     <main>
-        <h1>¡Regístrate en JAVEMATCH!</h1>
-        <p class="subtext">¿Ya estás registrado? <a href="login.html">Haz login</a></p>
-        <form id="registerForm">
-            <label for="name">NOMBRE</label>
-            <input type="text" id="name" name="nombre" placeholder="Escribe tu nombre" required>
-            
+        <h1>Login</h1>
+        <p class="subtext">Sign in to continue</p>
+        <form id="loginForm">
             <label for="email">EMAIL</label>
-            <input type="email" id="email" name="correo" placeholder="ejemplo@javeriana.edu.co" pattern=".+@javeriana.edu.co" required>
-            
-            <label>SELECCIONE 3 INTERESES PRINCIPALES</label>
-            <div id="interests">
-                <label><input type="checkbox" name="intereses" value="Deportes"> Deportes</label>
-                <label><input type="checkbox" name="intereses" value="Música"> Música</label>
-                <label><input type="checkbox" name="intereses" value="Videojuegos"> Videojuegos</label>
-                <label><input type="checkbox" name="intereses" value="Baile"> Baile</label>
-                <label><input type="checkbox" name="intereses" value="Lectura"> Lectura y/o escritura</label>
-            </div>
-            
-            <label for="plan">PLAN</label>
-            <select id="plan" name="plan" required>
-                <option value="" disabled selected>Select</option>
-                <option value="bronze">Bronze</option>
-                <option value="silver">Silver</option>
-                <option value="gold">Gold</option>
-            </select>
-            
-            <button type="submit" class="btn-primary">Sign Up</button>
+            <input type="email" id="email" name="email" placeholder="ejemplo@javeriana.edu.co" pattern=".+@javeriana.edu.co" required>
+            <button type="submit" class="btn-primary">Login</button>
         </form>
+        <p>¿No tienes cuenta? <a href="register.html"><button class="btn-primary">Registrarse</button></a></p>
     </main>
     <script src="scripts.js"></script>
     <script>

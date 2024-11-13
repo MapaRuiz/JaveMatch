@@ -1,8 +1,14 @@
 package gajudama.javematch.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,6 +21,8 @@ import lombok.Data;
 
 @Data
 @Entity
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "user_id")
+
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,13 +65,13 @@ public class Usuario {
     @OneToMany(mappedBy = "amigoUsuario")
     private List<Amistad> friendshipsAsFriend;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_interes",
         joinColumns = @JoinColumn(name = "usuario_id"),
         inverseJoinColumns = @JoinColumn(name = "interes_id")
-    )
-    private List<Interes> intereses;
+    )   
+    private List<Interes> intereses = new ArrayList<>();
     
     // Notifications received by the user
     @OneToMany(mappedBy = "usuarioNotificado")
@@ -71,5 +79,6 @@ public class Usuario {
 
     // Many users can share the same plan
     @ManyToOne
+    @JoinColumn(name = "plan_id") 
     private Plan plan;
 }

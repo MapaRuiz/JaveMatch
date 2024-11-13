@@ -1,408 +1,206 @@
-const API_URL = 'http://localhost:8080/api';
+// ---- Funciones para index.html y login.html ---- //
+document.getElementById('registerForm')?.addEventListener('submit', async function(event) {
+    event.preventDefault();  // Prevenir el comportamiento por defecto del formulario
 
-// Función para manejar solicitudes genéricas
-async function apiRequest(endpoint, method = 'GET', body = null) {
+    // Obtener los valores de los campos
+    const nombre = document.getElementById('name').value;
+    const correo = document.getElementById('email').value;
+    const interesesSeleccionados = Array.from(document.querySelectorAll('#interests input:checked'))
+        .map(checkbox => checkbox.value);
+    const planMapping = {
+        "Bronze": 1,  // "Bronze" es el plan 1
+        "Silver": 2,  // "Silver" es el plan 2
+        "Gold": 3     // "Gold" es el plan 3
+    };
+
+    // Obtén el nombre del plan seleccionado desde el formulario
+    const planName = document.getElementById('plan').value;  // "Bronze", "Silver", "Gold"
+    
+    // Obtén el ID del plan usando el mapeo
+    const plan_id = planMapping[planName];  // Esto te da el número correspondiente (1, 2, o 3)
+    
+    // Crear el objeto con los datos del usuario
+    const usuarioData = {
+        nombre: nombre,
+        correo: correo,
+        intereses: interesesSeleccionados.map(interes => ({ nombre: interes })),
+        plan: { plan_id: plan_id }  // Aquí se usa el ID numérico del plan
+    };
+
+    // Realizar la solicitud POST
     try {
-        const response = await fetch(`${API_URL}${endpoint}`, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: body ? JSON.stringify(body) : null,
+        const response = await fetch('/api/usuario/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(usuarioData)  // Enviar los datos como JSON
         });
 
         if (response.ok) {
-            return await response.json();
+            const data = await response.json();  // Obtener la respuesta JSON
+            console.log('Usuario registrado exitosamente:', data);
+            alert('Usuario registrado exitosamente');
         } else {
             const errorData = await response.json();
-            console.error('Error en la solicitud:', response.status, errorData);
-            alert(`Error en la solicitud: ${response.status}. Detalles: ${errorData.message || 'No especificado'}`);
-            return null;
+            console.error('Error al registrar el usuario:', errorData);
+            alert('Hubo un error al registrar el usuario');
         }
     } catch (error) {
-        console.error('Error de conexión:', error);
-        alert('Error de conexión. Inténtalo de nuevo.');
-        return null;
+        console.error('Error al hacer la solicitud:', error);
+        alert('Error al hacer la solicitud');
     }
-}
-
-
-// ---- Funciones para index.html y login.html ---- //
-
-// Registrar usuario
-async function registerUsuario(usuarioData) {
-    const response = await apiRequest('/usuario/register', 'POST', usuarioData);
-    if (response) {
-        alert('Usuario registrado exitosamente');
-    } else {
-        alert('Error al registrar el usuario');
-    }
-    return response;
-}
+    document.getElementById('registerForm').reset();
+});
 
 // Loguear usuario
 async function loginUsuario(email) {
-    const response = await apiRequest(`/usuario/login?email=${email}`, 'POST');
-    if (response) {
-        alert('Login exitoso');
-    } else {
-        alert('Error en el login');
-    }
-    return response;
-}
+    try {
+        const response = await fetch(`/api/usuario/login?email=${email}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-// ---- Funciones para videollamada.html ---- //
-
-// Obtener una videollamada por ID
-async function getVideollamadaById(id) {
-    const response = await apiRequest(`/videollamada/${id}`, 'GET');
-    if (response) {
-        alert('Videollamada obtenida correctamente');
-    } else {
-        alert('Videollamada no encontrada');
-    }
-    return response;
-}
-
-// Agregar un juego a una videollamada existente
-async function addJuegoToVideollamada(videollamadaId, juegoData) {
-    const response = await apiRequest(`/videollamada/${videollamadaId}/addJuego`, 'POST', juegoData);
-    if (response) {
-        alert('Juego añadido a la videollamada');
-    } else {
-        alert('Error al añadir el juego');
-    }
-    return response;
-}
-
-// Función para crear un reporte
-async function createReporte(reporteData) {
-    const response = await apiRequest('/reporte/createReport', 'POST', reporteData);
-    if (response) {
-        alert('Reporte creado exitosamente');
-    } else {
-        alert('Error al crear el reporte');
-    }
-    return response;
-}
-
-// ---- Funciones para perfil.html ---- //
-
-// Función para obtener el perfil del usuario
-async function getUsuarioById(usuarioId) {
-    const response = await apiRequest(`/usuario/${usuarioId}`, 'GET');
-    if (response) {
-        alert('Perfil del usuario obtenido correctamente');
-    } else {
-        alert('Usuario no encontrado');
-    }
-    return response;
-}
-
-// Función para añadir un interés al usuario
-async function addInteres(usuarioId, interesData) {
-    const response = await apiRequest(`/usuario/addInteres?usuarioId=${usuarioId}`, 'POST', interesData);
-    if (response) {
-        alert('Interés añadido al usuario');
-    } else {
-        alert('Error al añadir el interés');
-    }
-    return response;
-}
-
-// Función para actualizar el plan del usuario
-async function upgradePlan(usuarioId, planData) {
-    const response = await apiRequest(`/usuario/upgradePlan?usuarioId=${usuarioId}`, 'POST', planData);
-    if (response) {
-        alert('Plan del usuario actualizado');
-    } else {
-        alert('Error al actualizar el plan');
-    }
-    return response;
-}
-
-// Función para obtener las notificaciones del usuario
-async function getAllNotificaciones() {
-    const response = await apiRequest('/notificacion', 'GET');
-    if (response) {
-        alert('Notificaciones obtenidas correctamente');
-    } else {
-        alert('Error al obtener las notificaciones');
-    }
-    return response;
-}
-
-// ---- Funciones para match.html ---- //
-
-// Obtener y mostrar todos los matches
-async function getAllMatches() {
-    const matches = await apiRequest('/usermatch', 'GET');
-    if (matches) {
-        document.getElementById('matchesResult').textContent = JSON.stringify(matches, null, 2);
-    } else {
-        alert('Error al obtener los matches');
-    }
-}
-
-// Crear un match aleatorio para el usuario
-async function randomMatch(usuarioId) {
-    const match = await apiRequest(`/usermatch/randomMatch?usuarioId=${usuarioId}`, 'POST');
-    if (match) {
-        alert('Match aleatorio creado con éxito');
-    } else {
-        alert('Error al crear match aleatorio');
-    }
-}
-
-// Obtener un usuario aleatorio
-async function getRandomUsuario() {
-    const usuario = await apiRequest('/usuario/random', 'GET');
-    if (usuario) {
-        document.getElementById('randomUserResult').textContent = JSON.stringify(usuario, null, 2);
-    } else {
-        alert('No se encontró ningún usuario aleatorio');
-    }
-}
-
-// Dar "Like" a un usuario
-async function likeUser(usuarioId, likedUsuarioId) {
-    const like = await apiRequest(`/userlike/likeUser?usuarioId=${usuarioId}&likedUsuarioId=${likedUsuarioId}`, 'POST');
-    if (like) {
-        alert('Usuario dado Like');
-    } else {
-        alert('Error al dar Like');
-    }
-}
-
-// Rechazar a un usuario
-async function rejectUser(usuarioId, rechazadoUsuarioId) {
-    const rechazo = await apiRequest(`/rechazo/reject?usuarioId=${usuarioId}&rechazadoUsuarioId=${rechazadoUsuarioId}`, 'POST');
-    if (rechazo) {
-        alert('Usuario rechazado');
-    } else {
-        alert('Error al rechazar al usuario');
-    }
-}
-
-// Confirmar amistad con un usuario
-async function confirmFriendship(matchId, isFriend) {
-    const amistad = await apiRequest(`/amistad/confirmFriendship?matchId=${matchId}&isFriend=${isFriend}`, 'POST');
-    if (amistad) {
-        alert(isFriend ? 'Amistad confirmada' : 'Amistad rechazada');
-    } else {
-        alert('Error al actualizar la amistad');
-    }
-}
-
-// Inicializar eventos para la página de registro
-function initializeRegisterPage() {
-    document.getElementById('registerForm')?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        if(document.getElementById('plan').value == "bronze"){
-            maxLikes=5;      
-        }else if(document.getElementById('plan').value == "silver"){
-            maxLikes =10;
-        }else if(document.getElementById('plan').value == "gold"){
-            maxLikes =15;
-        }
-        // Construcción del objeto usuarioData con intereses y plan estructurados correctamente
-        const usuarioData = {
-            nombre: document.getElementById('name').value,
-            correo: document.getElementById('email').value, // Cambiado a 'correo' para coincidir con el backend
-            intereses: List.from(document.querySelectorAll('input[name="intereses"]:checked')).map(input => ({ nombre: input.value })), // Estructura correcta de intereses
-            plan: { nombre: document.getElementById('plan').value, maxLikes: maxLikes} // Plan como objeto con el nombre
-        };
-
-        try {
-            const result = await registerUsuario(usuarioData);
-            if (result) {
-                alert('Registro exitoso');
-                window.location.href = 'login.html';
-            } else {
-                alert('Error al registrar el usuario');
-            }
-        } catch (error) {
-            console.error('Error en el registro:', error);
-            alert('Error al registrar el usuario. Verifica los datos e inténtalo nuevamente.');
-        }
-    });
-}
-
-
-// Inicializar eventos para la página de login
-function initializeLoginPage() {
-    document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const correo = document.getElementById('email').value;
-        const usuario = await loginUsuario(correo);
-        if (usuario) {
+        if (response.ok) {
+            const usuario = await response.json();  // Obtener los datos del usuario desde la respuesta
             alert('Login exitoso');
             localStorage.setItem('userId', usuario.id);  // Guardar el ID del usuario en localStorage
-            window.location.href = 'match.html';
+            window.location.href = 'match.html';  // Redirigir a la página de match
+            return usuario;  // Devuelvo el usuario para poder hacer más acciones si es necesario
         } else {
+            const errorData = await response.text();
+            alert(errorData);  // Muestra el mensaje de error devuelto por el backend
+            return null;  // En caso de error, no retorno ningún usuario
+        }
+    } catch (error) {
+        console.error('Error al hacer la solicitud de login:', error);
+        alert('Hubo un problema al intentar hacer login');
+        return null;  // En caso de error en la solicitud, no retorno ningún usuario
+    }
+}
+
+document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
+    event.preventDefault();  // Prevenir el envío normal del formulario
+    const correo = document.getElementById('email').value;  // Obtener el correo del formulario
+    const usuario = await loginUsuario(correo);  // Llamar a la función de login
+
+        if (usuario) {
+            // Si la respuesta fue exitosa, redirigir o hacer alguna otra acción
+            alert('Login exitoso');
+            localStorage.setItem('userId', usuario.id);  // Guardar el ID del usuario en localStorage
+            window.location.href = 'match.html';  // Redirigir a la página de match
+        } else {
+            // Si el login falla, mostrar mensaje de error
             alert('Login fallido');
         }
-    });
-}
+});
 
-// Inicializar eventos para la página de videollamada
-function initializeVideollamadaPage() {
-    // Evento para buscar una videollamada por ID
-    document.getElementById('searchVideoCall').addEventListener('click', async () => {
-        const videoCallId = document.getElementById('videoCallId').value;
-        const videollamada = await getVideollamadaById(videoCallId);
-        if (videollamada) {
-            document.getElementById('videocallResult').textContent = JSON.stringify(videollamada, null, 2);
-        } else {
-            alert('Videollamada no encontrada');
+let usuarios = [];
+let currentIndex = 0;
+
+async function fetchUsers() {
+    try {
+        const response = await fetch('https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario')  // URL de tu API de usuarios  // Asegúrate de que esta ruta es la correcta
+        usuarios = await response.json();
+
+        if (usuarios.length > 0) {
+            showUser(currentIndex);
         }
-    });
-
-    // Evento para añadir un juego a la videollamada
-    document.getElementById('addGame').addEventListener('click', async () => {
-        const videollamadaId = document.getElementById('videoCallId').value;
-        const gameName = document.getElementById('gameName').value;
-        const juegoData = { nombre: gameName };
-        const result = await addJuegoToVideollamada(videollamadaId, juegoData);
-        if (result) {
-            alert('Juego añadido a la videollamada');
-        } else {
-            alert('Error al añadir el juego');
-        }
-    });
-
-    // Evento para enviar un reporte
-    document.getElementById('submitReport').addEventListener('click', async () => {
-        const reportType = document.getElementById('reportType').value;
-        const reportDescription = document.getElementById('reportDescription').value;
-        const videoCallId = document.getElementById('videoCallId').value;
-        const reporteData = {
-            autorId: 1,  // Reemplazar con el ID del autor si está disponible
-            reportadoId: 2,  // Reemplazar con el ID del usuario reportado
-            tipo: reportType,
-            descripcion: reportDescription,
-            videollamadaId: videoCallId
-        };
-        
-        const result = await createReporte(reporteData);
-        if (result) {
-            alert('Reporte enviado correctamente');
-        } else {
-            alert('Error al enviar el reporte');
-        }
-    });
-}
-
-// ---- Inicializar eventos para la página de perfil ----
-function initializePerfilPage() {
-    const usuarioId = localStorage.getItem('userId'); // Obtener el ID real del usuario logueado desde localStorage
-
-    if (!usuarioId) {
-        alert('No se encontró el ID del usuario. Por favor, inicia sesión.');
-        window.location.href = 'login.html';
-        return;
+    } catch (error) {
+        console.error('Error fetching users:', error);
     }
-
-    // Evento para cargar el perfil del usuario
-    document.getElementById('buscarPerfil')?.addEventListener('click', async () => {
-        const usuario = await getUsuarioById(usuarioId);
-        if (usuario) {
-            document.getElementById('perfilResult').textContent = JSON.stringify(usuario, null, 2);
-        } else {
-            alert('Usuario no encontrado');
-        }
-    });
-
-    // Evento para añadir un interés
-    document.getElementById('addInteres')?.addEventListener('click', async () => {
-        const interesName = document.getElementById('newInteres').value;
-        const interesData = { nombre: interesName };
-        const result = await addInteres(usuarioId, interesData);
-        if (result) {
-            alert('Interés añadido');
-        } else {
-            alert('Error al añadir el interés');
-        }
-    });
-
-    // Evento para actualizar el plan
-    document.getElementById('updatePlan')?.addEventListener('click', async () => {
-        const planName = document.getElementById('planSelect').value;
-        const planData = { nombre: planName };
-        const result = await upgradePlan(usuarioId, planData);
-        if (result) {
-            alert('Plan actualizado');
-        } else {
-            alert('Error al actualizar el plan');
-        }
-    });
-
-    // Evento para mostrar las notificaciones
-    document.getElementById('verNotificaciones')?.addEventListener('click', async () => {
-        const notificaciones = await getAllNotificaciones();
-        if (notificaciones) {
-            document.getElementById('notificacionesResult').textContent = JSON.stringify(notificaciones, null, 2);
-        } else {
-            alert('Error al obtener las notificaciones');
-        }
-    });
 }
 
-// ---- Inicializar Eventos para la Página de Match ---- //
-function initializeMatchPage() {
-    const usuarioId = localStorage.getItem('userId'); // Obtener el ID del usuario logueado del almacenamiento local
+function showUser(index) {
+    const user = usuarios[index];
+    console.log(user);  // Verifica qué valores tiene el objeto user
+    const userListElement = document.getElementById('user-list');
 
-    // Evento para mostrar todos los matches
-    document.getElementById('showAllMatches')?.addEventListener('click', getAllMatches);
+    if (user) {
+        userListElement.innerHTML = `
+            <div class="user-card">
+                <h2>${user.nombre}</h2>
+                <p>Intereses:</p>
+                <ul>
+                    ${user.intereses.map(interes => `<li>${interes}</li>`).join('')}
+                </ul>
+                <button id="accept-btn">Aceptar</button>
+                <button id="reject-btn">Rechazar</button>
+            </div>
+        `;
 
-    // Evento para crear un match aleatorio
-    document.getElementById('randomMatchButton')?.addEventListener('click', () => {
-        randomMatch(usuarioId);
-    });
+        document.getElementById('accept-btn').addEventListener('click', () => {
+            const likedUsuarioId = user.user_id;  // Asegúrate de que esto tiene un valor válido
+            if (likedUsuarioId) {
+                acceptUser(likedUsuarioId);
+                currentIndex++;
+                if (currentIndex < usuarios.length) {
+                    showUser(currentIndex);
+                }
+            } else {
+                console.error("Error: El ID de usuario es inválido");
+            }
+        });
 
-    // Evento para obtener y mostrar un usuario aleatorio
-    document.getElementById('showRandomUser')?.addEventListener('click', getRandomUsuario);
-
-    // Evento para dar "Like" al usuario mostrado
-    document.getElementById('likeUserButton')?.addEventListener('click', async () => {
-        const randomUsuarioId = document.getElementById('randomUserId').value;
-        await likeUser(usuarioId, randomUsuarioId);
-    });
-
-    // Evento para rechazar al usuario mostrado
-    document.getElementById('rejectUserButton')?.addEventListener('click', async () => {
-        const randomUsuarioId = document.getElementById('randomUserId').value;
-        await rejectUser(usuarioId, randomUsuarioId);
-    });
-
-    // Evento para aceptar una solicitud de amistad
-    document.getElementById('acceptFriendshipButton')?.addEventListener('click', async () => {
-        const matchId = document.getElementById('friendMatchId').value;
-        await confirmFriendship(matchId, true);
-    });
-
-    // Evento para rechazar una solicitud de amistad
-    document.getElementById('rejectFriendshipButton')?.addEventListener('click', async () => {
-        const matchId = document.getElementById('friendMatchId').value;
-        await confirmFriendship(matchId, false);
-    });
-}
-
-// Detectar y inicializar la página correcta
-function initializePage() {
-    const pathname = window.location.pathname;
-    if (pathname.includes('index.html')) {
-        initializeRegisterPage();
-    } else if (pathname.includes('login.html')) {
-        initializeLoginPage();
-    } else if (pathname.includes('videollamada.html')) {
-        initializeVideollamadaPage();
-    } else if (pathname.includes('perfil.html')) {
-        initializeProfilePage();
-    } else if (pathname.includes('match.html')) {
-        initializeMatchPage();
+        document.getElementById('reject-btn').addEventListener('click', () => {
+            rejectUser(user.user_id);  // Usamos user.user_id aquí
+            currentIndex++;
+            if (currentIndex < usuarios.length) {
+                showUser(currentIndex);
+            }
+        });
     }
+}
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', fetchUsers);
+
+// Cuando se hace click en "Aceptar"
+function acceptUser(likedUsuarioId) {
+    if (likedUsuarioId) {  // Asegúrate de que likedUsuarioId esté definido
+        fetch(`/api/usermatch/accept/${likedUsuarioId}`, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Match creado:", data);
+        })
+        .catch(error => console.error("Error:", error));
+    } else {
+        console.error("El ID del usuario es inválido para aceptar:", likedUsuarioId);
+    }
+}
+
+// Cuando se hace click en "Rechazar"
+function rejectUser(likedUsuarioId) {
+    fetch(`/api/usermatch/reject/${likedUsuarioId}`, {
+        method: 'POST',
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Maneja la respuesta, por ejemplo, mostrar el siguiente usuario
+        console.log(data);
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+
+// Función para manejar el clic en Like
+function handleLike(userId) {
+    alert(`Has dado Like al usuario con ID ${userId}`);
+    // Aquí puedes agregar la lógica para manejar el "like"
+}
+
+// Función para manejar el clic en Rechazar
+function handleReject(userId) {
+    alert(`Has rechazado al usuario con ID ${userId}`);
+    // Aquí puedes agregar la lógica para manejar el "rechazo"
+}
+
     
-}
-
-// Llamar a initializePage para configurar eventos al cargar el documento
-document.addEventListener('DOMContentLoaded', initializePage);

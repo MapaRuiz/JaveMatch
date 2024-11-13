@@ -56,29 +56,25 @@ public class UserMatchLogic {
 
     @Transactional
     public UserMatch createMatch(Long usuarioId, Long likedUsuarioId) {
+        // Obtener usuarios 
         Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         Usuario likedUsuario = usuarioLogic.getUsuarioById(likedUsuarioId)
             .orElseThrow(() -> new RuntimeException("Liked user not found"));
-
+    
+        // Crear un nuevo objeto UserMatch
         UserMatch userMatch = new UserMatch();
         userMatch.setUser1(usuario);
         userMatch.setUser2(likedUsuario);
-        userMatch.setFechaMatch(new Date());
-        userMatch.setAmistad(false);
-
-        Videollamada videollamada = videollamadaLogic.createVideollamada(userMatch);
-        notificacionLogic.sendFriendRequestNotification(usuarioId, likedUsuarioId);
-
-        userMatch.setVideollamada_Match(videollamada);
+        userMatch.setFechaMatch(new Date());  // Set the match date
+        userMatch.setAmistad(false);  // Inicialmente no es amistad
+    
         
-        usuario.getMatchesAsUser1().add(userMatch);
-        likedUsuario.getMatchesAsUser2().add(userMatch);
-        usuarioLogic.updateMatchesAsUser1(usuarioId, usuario.getMatchesAsUser1());
-        usuarioLogic.updateMatchesAsUser2(likedUsuarioId, likedUsuario.getMatchesAsUser2());
-
+    
+        // Guardar el match en la base de datos
         return matchRepository.save(userMatch);
     }
+    
 
     // **Emparejamiento al azar**. Selecciona al azar otro usuario con prioridad a los intereses en común.
     @Transactional

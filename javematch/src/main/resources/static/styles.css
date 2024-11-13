@@ -140,3 +140,27 @@ select {
 button {
     margin-top: 10px;
 }
+
+
+button {
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    border: none;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button.reject-btn {
+    background-color: #f44336;
+}
+
+button.reject-btn:hover {
+    background-color: #e53935;
+}
