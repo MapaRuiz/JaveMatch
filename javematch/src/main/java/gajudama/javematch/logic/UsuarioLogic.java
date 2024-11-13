@@ -202,5 +202,8 @@ public class UsuarioLogic {
         Random rand = new Random();
         return usuarios.get(rand.nextInt(usuarios.size())); // Seleccionar un usuario aleatorio
     }
+    public Optional<Usuario> findById(Long userId) {
+        return usuarioRepository.findById(userId);
+    }
     
 }

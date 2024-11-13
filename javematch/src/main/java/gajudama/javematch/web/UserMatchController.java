@@ -62,15 +62,13 @@ public class UserMatchController {
         return new ResponseEntity<>(match, HttpStatus.CREATED);
     }
 
-   // Endpoint para aceptar un usuario y crear un match
+// Endpoint para aceptar un usuario y crear un match
 @PostMapping("/accept/{likedUsuarioId}")
-public ResponseEntity<UserMatch> acceptUser(@PathVariable Long likedUsuarioId) {
-    Long usuarioId = 1L;  // El ID del usuario "Juan Pérez"
-    
+public ResponseEntity<UserMatch> acceptUser(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
     try {
-        // Crear el match entre el usuario Juan Pérez (usuarioId) y el usuario que fue aceptado (likedUsuarioId)
+        // Crear el match entre el usuario logueado (usuarioId) y el usuario que fue aceptado (likedUsuarioId)
         UserMatch match = userMatchLogic.createMatch(usuarioId, likedUsuarioId);
-        System.out.println("Match creado:" + match);  // Imprimir en la consola del servidor
+        System.out.println("Match creado: " + match);  // Imprimir en la consola del servidor
 
         return new ResponseEntity<>(match, HttpStatus.CREATED);
     } catch (Exception e) {
@@ -78,6 +76,7 @@ public ResponseEntity<UserMatch> acceptUser(@PathVariable Long likedUsuarioId) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
+
 
 // Endpoint para rechazar un usuario
 @PostMapping("/reject/{likedUsuarioId}")

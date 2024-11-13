@@ -66,7 +66,7 @@ async function loginUsuario(email) {
         if (response.ok) {
             const usuario = await response.json();  // Obtener los datos del usuario desde la respuesta
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.id);  // Guardar el ID del usuario en localStorage
+            localStorage.setItem('userId', usuario.user_id);  // Guardar el ID del usuario en localStorage
             window.location.href = 'match.html';  // Redirigir a la página de match
             return usuario;  // Devuelvo el usuario para poder hacer más acciones si es necesario
         } else {
@@ -89,7 +89,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (event) =
         if (usuario) {
             // Si la respuesta fue exitosa, redirigir o hacer alguna otra acción
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.id);  // Guardar el ID del usuario en localStorage
+            localStorage.setItem('userId', usuario.user_id);  // Guardar el ID del usuario en localStorage
             window.location.href = 'match.html';  // Redirigir a la página de match
         } else {
             // Si el login falla, mostrar mensaje de error
@@ -163,8 +163,10 @@ document.addEventListener('DOMContentLoaded', fetchUsers);
 
 // Cuando se hace click en "Aceptar"
 function acceptUser(likedUsuarioId) {
-    if (likedUsuarioId) { 
-        fetch(`/api/usermatch/accept/${likedUsuarioId}`, {
+    const usuarioId = Number(localStorage.getItem('userId')); // Obtener el ID del usuario logueado desde localStorage
+    console.log('usuarioId:', usuarioId);
+    if (likedUsuarioId && usuarioId) { 
+        fetch(`/api/usermatch/accept/${likedUsuarioId}?usuarioId=${usuarioId}`, {
             method: 'POST',
         })
         .then(response => response.json())
@@ -176,6 +178,7 @@ function acceptUser(likedUsuarioId) {
         console.error("El ID del usuario es inválido para aceptar:", likedUsuarioId);
     }
 }
+
 
 // Cuando se hace click en "Rechazar"
 function rejectUser(likedUsuarioId) {

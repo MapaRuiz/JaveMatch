@@ -76,7 +76,7 @@ public class UserMatchLogic {
     }
     
 
-    // **Emparejamiento al azar**. Selecciona al azar otro usuario con prioridad a los intereses en común.
+    //**Emparejamiento al azar**. Selecciona al azar otro usuario con prioridad a los intereses en común.
     @Transactional
     public UserMatch randomMatch(Long usuarioId) {
         
@@ -108,4 +108,5 @@ public class UserMatchLogic {
         // Crea y retorna el emparejamiento con el usuario seleccionado
         return createMatch(usuarioId, selectedUsuario.getUser_id());
     }
+    
 }
