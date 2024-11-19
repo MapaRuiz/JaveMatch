@@ -46,7 +46,7 @@ public class UsuarioControllerTest {
     @Test
     void testCreateUsuario() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setNombre("John Doe");
         usuario.setCorreo("john@javeriana.edu.co");
 
@@ -62,7 +62,7 @@ public class UsuarioControllerTest {
     @Test
     void testGetUsuarioById() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setNombre("John Doe");
 
         when(usuarioLogic.getUsuarioById(1L)).thenReturn(Optional.of(usuario));
@@ -100,11 +100,11 @@ void testAddInteres() throws Exception {
     @Test
     void testFindUsersWithMatchingInterests() throws Exception {
         Usuario usuario1 = new Usuario();
-        usuario1.setUser_id(1L);
+        usuario1.setUserId(1L);
         usuario1.setNombre("Alice");
 
         Usuario usuario2 = new Usuario();
-        usuario2.setUser_id(2L);
+        usuario2.setUserId(2L);
         usuario2.setNombre("Bob");
 
         when(usuarioLogic.findUsersWithMatchingInterests(1L)).thenReturn(Arrays.asList(usuario1, usuario2));
@@ -118,11 +118,11 @@ void testAddInteres() throws Exception {
     @Test
     void testGetAllUsuarios() throws Exception {
         Usuario usuario1 = new Usuario();
-        usuario1.setUser_id(1L);
+        usuario1.setUserId(1L);
         usuario1.setNombre("Alice");
 
         Usuario usuario2 = new Usuario();
-        usuario2.setUser_id(2L);
+        usuario2.setUserId(2L);
         usuario2.setNombre("Bob");
 
         when(usuarioLogic.getAllUsuarios()).thenReturn(Arrays.asList(usuario1, usuario2));
@@ -136,7 +136,7 @@ void testAddInteres() throws Exception {
     @Test
     void testGetRandomUsuario() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setNombre("Random User");
 
         when(usuarioLogic.getRandomUsuario()).thenReturn(usuario);
@@ -149,7 +149,7 @@ void testAddInteres() throws Exception {
     @Test
     void testLoginUsuario() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setCorreo("test@javeriana.edu.co");
 
         when(usuarioLogic.loginUsuario("test@javeriana.edu.co")).thenReturn(Optional.of(usuario));
@@ -163,7 +163,7 @@ void testAddInteres() throws Exception {
     @Test
     void testRegisterUsuario() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setCorreo("test@javeriana.edu.co");
 
         when(usuarioLogic.registerUsuario(any(Usuario.class))).thenReturn(usuario);
@@ -178,7 +178,7 @@ void testAddInteres() throws Exception {
     @Test
     void testUpdateUsuario() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
         usuario.setNombre("Updated User");
 
         when(usuarioLogic.updateUsuario(eq(1L), any(Usuario.class))).thenReturn(usuario);
@@ -193,12 +193,12 @@ void testAddInteres() throws Exception {
     @Test
     void testUpgradePlan() throws Exception {
         Usuario usuario = new Usuario();
-        usuario.setUser_id(1L);
+        usuario.setUserId(1L);
 
         Plan plan = new Plan();
         plan.setPlan_id(1L);
 
-        when(usuarioLogic.upgradePlan(eq(1L), any(Plan.class))).thenReturn(usuario);
+        when(usuarioLogic.upgradePlan(eq(1L), anyLong())).thenReturn(usuario);
 
         mockMvc.perform(post("/api/usuario/upgradePlan")
                 .param("usuarioId", "1")

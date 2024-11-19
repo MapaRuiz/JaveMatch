@@ -64,7 +64,7 @@ public class UserLikeLogic {
         // Check if the like already exists
         boolean likeExists = false;
         for (UserLike like : usuario.getLikesGiven()) {
-            if (like.getLikedUsuario().getUser_id().equals(likedUsuarioId)) {
+            if (like.getLikedUsuario().getUserId().equals(likedUsuarioId)) {
                 likeExists = true;
                 break;
             }
@@ -88,7 +88,7 @@ public class UserLikeLogic {
         // Check if mutual like exists
         boolean mutualLikeExists = false;
         for (UserLike like : likedUsuario.getLikesGiven()) {
-            if (like.getLikedUsuario().getUser_id().equals(usuarioId)) {
+            if (like.getLikedUsuario().getUserId().equals(usuarioId)) {
                 mutualLikeExists = true;
                 break;
             }

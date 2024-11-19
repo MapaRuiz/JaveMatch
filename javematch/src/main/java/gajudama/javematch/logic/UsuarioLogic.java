@@ -122,7 +122,7 @@ public class UsuarioLogic {
     }
 
     @Autowired
-    private PlanRepository PlanRepository;
+    private PlanRepository planRepository;
 
     @Autowired
     private InteresRepository InteresRepository;
@@ -139,7 +139,7 @@ public class UsuarioLogic {
 
         // Verificar y asignar el plan
         System.out.println("Buscando plan con ID: " + usuario.getPlan().getPlan_id());
-        Plan plan = PlanRepository.findById(usuario.getPlan().getPlan_id())
+        Plan plan = planRepository.findById(usuario.getPlan().getPlan_id())
                 .orElseThrow(() -> new IllegalArgumentException("Plan no encontrado"));
         usuario.setPlan(plan);
         System.out.println("Plan asignado correctamente: " + plan);
@@ -170,22 +170,34 @@ public class UsuarioLogic {
     }
 
     @Transactional
-    public Usuario upgradePlan(Long usuarioId, Plan newPlan) {
+    public Usuario upgradePlan(Long usuarioId, Long planId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        usuario.setPlan(newPlan);
+        Plan plan = planRepository.findById(planId)
+            .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
+
+        usuario.setPlan(plan);
         return usuarioRepository.save(usuario);
     }
 
     @Transactional
     public Usuario addInteres(Long usuarioId, Interes interes) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        usuario.getIntereses().add(interes);
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    
+        // Verifica si el interés ya existe en la base de datos
+        Interes interesExistente = InteresRepository.findByNombre(interes.getNombre())
+                .orElseGet(() -> {
+                    // Si no existe, persiste el nuevo interés
+                    return InteresRepository.save(interes);
+                });
+            
+        // Agrega el interés al usuario
+        usuario.getIntereses().add(interesExistente);
         return usuarioRepository.save(usuario);
     }
+
 
     public List<Usuario> findUsersWithMatchingInterests(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)

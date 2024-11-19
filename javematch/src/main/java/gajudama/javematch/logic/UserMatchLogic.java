@@ -106,7 +106,11 @@ public class UserMatchLogic {
         }
 
         // Crea y retorna el emparejamiento con el usuario seleccionado
-        return createMatch(usuarioId, selectedUsuario.getUser_id());
+        return createMatch(usuarioId, selectedUsuario.getUserId());
     }
     
+    public List<UserMatch> getMutualMatches(Long userId) {
+        return matchRepository.findMutualMatches(userId);
+    }    
+
 }

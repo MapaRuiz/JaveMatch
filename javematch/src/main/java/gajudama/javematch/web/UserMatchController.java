@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import gajudama.javematch.logic.NotificacionLogic;
 import gajudama.javematch.logic.UserMatchLogic;
 import gajudama.javematch.model.UserMatch;
 
@@ -61,30 +63,49 @@ public class UserMatchController {
         UserMatch match = userMatchLogic.randomMatch(usuarioId);
         return new ResponseEntity<>(match, HttpStatus.CREATED);
     }
+    
+    @Autowired
+    NotificacionLogic notificacionLogic;
 
-// Endpoint para aceptar un usuario y crear un match
-@PostMapping("/accept/{likedUsuarioId}")
-public ResponseEntity<UserMatch> acceptUser(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
-    try {
-        // Crear el match entre el usuario logueado (usuarioId) y el usuario que fue aceptado (likedUsuarioId)
-        UserMatch match = userMatchLogic.createMatch(usuarioId, likedUsuarioId);
-        System.out.println("Match creado: " + match);  // Imprimir en la consola del servidor
+    @PostMapping("/accept/{likedUsuarioId}")
+    public ResponseEntity<?> acceptUserAndNotify(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
+        try {
+            // Crear el match entre los usuarios
+            UserMatch match = userMatchLogic.createMatch(usuarioId, likedUsuarioId);
+            System.out.println("Match creado: " + match);
 
-        return new ResponseEntity<>(match, HttpStatus.CREATED);
-    } catch (Exception e) {
-        System.out.println("Error al crear el match: " + e.getMessage());
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            // Enviar una notificación al usuario aceptado
+            String mensaje = "¡Felicidades! El usuario con ID " + usuarioId + " te ha aceptado como match.";
+            notificacionLogic.sendMatchNotification(likedUsuarioId, mensaje);
+
+            // Retornar el match creado y un mensaje de éxito
+            return new ResponseEntity<>(match, HttpStatus.CREATED);
+        } catch (Exception e) {
+            System.out.println("Error al aceptar usuario y enviar notificación: " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
-}
 
 
-// Endpoint para rechazar un usuario
-@PostMapping("/reject/{likedUsuarioId}")
-public ResponseEntity<String> rejectUser(@PathVariable Long likedUsuarioId) {
-    // Lógica para rechazar al usuario (por ejemplo, notificarlo o actualizar su estado en la base de datos)
-    System.out.println("Usuario con ID " + likedUsuarioId + " ha sido rechazado.");
 
-    // Aquí podrías manejar la lógica de rechazo, por ejemplo, marcarlo como rechazado en la base de datos
-    return new ResponseEntity<>("Usuario rechazado", HttpStatus.OK);
-}
+    // Endpoint para rechazar un usuario
+    @PostMapping("/reject/{likedUsuarioId}")
+    public ResponseEntity<String> rejectUser(@PathVariable Long likedUsuarioId) {
+        // Lógica para rechazar al usuario (por ejemplo, notificarlo o actualizar su estado en la base de datos)
+        System.out.println("Usuario con ID " + likedUsuarioId + " ha sido rechazado.");
+
+        // Aquí podrías manejar la lógica de rechazo, por ejemplo, marcarlo como rechazado en la base de datos
+        return new ResponseEntity<>("Usuario rechazado", HttpStatus.OK);
+    }
+
+    @GetMapping("/mutual/{userId}")
+    public ResponseEntity<List<UserMatch>> getMutualMatches(@PathVariable Long userId) {
+        try {
+            List<UserMatch> mutualMatches = userMatchLogic.getMutualMatches(userId);
+            return new ResponseEntity<>(mutualMatches, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

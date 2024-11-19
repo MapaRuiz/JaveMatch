@@ -10,7 +10,8 @@
     <header>
         <nav>
             <a href="index.html">Inicio</a>
-            <a href="match.html">Match</a>
+            <a href="match.html">Conoce gente</a>
+            <a href="tusMatches.html">Tus Matches</a>
             <a href="videollamada.html">Videollamada</a>
             <a href="perfil.html">Perfil</a>
         </nav>
@@ -19,13 +20,14 @@
         <!-- Sección de Perfil -->
         <section id="profile-section">
             <h1>Perfil</h1>
-            <p class="section-subtitle">MIRA TU PERFIL!!</p>
-            <div id="profileData" class="data-box">
-                <!-- Aquí se mostrará la información del perfil en formato JSON -->
+            <p id="welcome-message" class="section-subtitle">Hola, <span id="userName"></span></p>
+            <div class="user-info">
+                <p><strong>Nombre:</strong> <span id="userFullName"></span></p>
+                <p><strong>Intereses:</strong></p>
+                <ul id="userInterests"></ul>
+                <p><strong>Plan:</strong> <span id="userPlan"></span></p>
             </div>
-            <div class="button-group-right">
-                <button id="viewProfile" class="btn-primary">Buscar</button>
-            </div>
+           
         </section>
 
         <!-- Sección de Intereses -->
@@ -44,11 +46,11 @@
             <h2>Plan</h2>
             <p class="section-subtitle">ACTUALIZA TU PLAN!!</p>
             <label for="updatePlan">PLAN</label>
-            <select id="updatePlan">
+            <select id="updatePlan" name="plan">
                 <option value="" disabled selected>Selecciona tu plan</option>
-                <option value="bronze">Bronze</option>
-                <option value="silver">Silver</option>
-                <option value="gold">Gold</option>
+                <option value="1">Bronze</option>
+                <option value="2">Silver</option>
+                <option value="3">Gold</option>
             </select>
             <div class="button-group-right">
                 <button id="updatePlanBtn" class="btn-primary">Actualizar</button>
@@ -68,8 +70,5 @@
         </section>
     </main>
     <script src="scripts.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', initializePage);
-    </script>
 </body>
 </html>

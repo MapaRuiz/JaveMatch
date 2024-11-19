@@ -17,12 +17,11 @@ public class UserMatch {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long UserMatch_id;
+    private Long UserMatchId;
 
     @ManyToOne
     @JoinColumn(name = "user1_user_id") 
-    
-    private Usuario user1;  // First user in the match
+    private Usuario user1;  
 
     @ManyToOne
     @JoinColumn(name = "user2_user_id") 

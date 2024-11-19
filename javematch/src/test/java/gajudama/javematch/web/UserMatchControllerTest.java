@@ -39,16 +39,16 @@ class UserMatchControllerTest {
     
         // Crear usuarios mock para user1 y user2
         Usuario usuario1 = new Usuario();
-        usuario1.setUser_id(usuarioId);  // Asignar un id para el primer usuario
+        usuario1.setUserId(usuarioId);  // Asignar un id para el primer usuario
     
         Usuario usuario2 = new Usuario();
-        usuario2.setUser_id(likedUsuarioId);  // Asignar un id para el segundo usuario
+        usuario2.setUserId(likedUsuarioId);  // Asignar un id para el segundo usuario
     
         // Crear un match con los usuarios mock
         UserMatch match = new UserMatch();
         match.setUser1(usuario1);  // Asignar usuario1 al match
         match.setUser2(usuario2);  // Asignar usuario2 al match
-        match.setUserMatch_id(1L);
+        match.setUserMatchId(1L);
         match.setAmistad(false);
     
         // Simular la creación de un match
@@ -58,8 +58,8 @@ class UserMatchControllerTest {
     
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(usuarioId, response.getBody().getUser1().getUser_id());
-        assertEquals(likedUsuarioId, response.getBody().getUser2().getUser_id());
+        assertEquals(usuarioId, response.getBody().getUser1().getUserId());
+        assertEquals(likedUsuarioId, response.getBody().getUser2().getUserId());
     }
     
 
@@ -92,7 +92,7 @@ class UserMatchControllerTest {
     void testGetMatchById() {
         Long matchId = 1L;
         UserMatch match = new UserMatch();
-        match.setUserMatch_id(matchId);
+        match.setUserMatchId(matchId);
 
         // Simular la búsqueda de un match por ID
         when(userMatchLogic.getMatchById(matchId)).thenReturn(Optional.of(match));
@@ -101,7 +101,7 @@ class UserMatchControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(matchId, response.getBody().getUserMatch_id());
+        assertEquals(matchId, response.getBody().getUserMatchId());
     }
 
     @Test
@@ -120,7 +120,7 @@ class UserMatchControllerTest {
     void testRandomMatch() {
         Long usuarioId = 1L;
         UserMatch match = new UserMatch();
-        match.setUserMatch_id(1L);
+        match.setUserMatchId(1L);
         match.setAmistad(false);
 
         // Simular la creación de un match aleatorio
@@ -140,7 +140,7 @@ class UserMatchControllerTest {
         matchDetails.setAmistad(true);
 
         UserMatch updatedMatch = new UserMatch();
-        updatedMatch.setUserMatch_id(matchId);
+        updatedMatch.setUserMatchId(matchId);
         updatedMatch.setFechaMatch(new Date());
         updatedMatch.setAmistad(true);
 
