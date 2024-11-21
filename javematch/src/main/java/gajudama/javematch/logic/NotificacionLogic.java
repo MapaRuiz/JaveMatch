@@ -26,16 +26,6 @@ public class NotificacionLogic {
         return notificacionRepository.findById(id);
     }
 
-    @Transactional
-    public Notificacion updateNotificacion(Long id, Notificacion notificacionDetails) {
-        return notificacionRepository.findById(id).map(notificacion -> {
-            notificacion.setEstadoLectura(notificacionDetails.getEstadoLectura());
-            notificacion.setFechaEnvio(notificacionDetails.getFechaEnvio());
-            notificacion.setMensaje(notificacionDetails.getMensaje());
-            notificacion.setUsuarioNotificado(notificacionDetails.getUsuarioNotificado());
-            return notificacionRepository.save(notificacion);
-        }).orElseThrow(() -> new RuntimeException("Notificacion not found"));
-    }
 
     @Transactional
     public void deleteNotificacion(Long id) {
@@ -57,7 +47,7 @@ public class NotificacionLogic {
         Notificacion notificacion = new Notificacion();
         notificacion.setUsuarioNotificado(usuario);
         notificacion.setMensaje(mensaje);
-        notificacion.setEstadoLectura(isRead);
+        notificacion.setFechaEnvio(new Date());
         notificacionRepository.save(notificacion);
     }
 
@@ -72,19 +62,8 @@ public class NotificacionLogic {
         sendNotification(likedUsuarioId, "Would you like to be friends with " + usuario.getNombre() + "?", false);
     }
     
-    @Transactional
-    public void sendMatchNotification(Long usuarioNotificadoId, String mensaje) {
-        Usuario usuarioNotificado = usuarioLogic.getUsuarioById(usuarioNotificadoId)
-            .orElseThrow(() -> new RuntimeException("Usuario notificado no encontrado"));
+    public List<Notificacion> getNotificacionesByUsuario(Long usuarioId) {
+        return notificacionRepository.findByUsuarioNotificado(usuarioId);
+    }    
 
-        Notificacion notificacion = new Notificacion();
-        notificacion.setUsuarioNotificado(usuarioNotificado);
-        notificacion.setMensaje(mensaje);
-        notificacion.setEstadoLectura(false); // Notificación sin leer
-        notificacion.setFechaEnvio(new Date());
-
-        notificacionRepository.save(notificacion);
-    }
-
-    
 }

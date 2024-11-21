@@ -29,12 +29,6 @@ public class NotificacionController {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Notificacion> updateNotificacion(@PathVariable Long id, @RequestBody Notificacion notificacionDetails) {
-        Notificacion updatedNotificacion = notificacionLogic.updateNotificacion(id, notificacionDetails);
-        return new ResponseEntity<>(updatedNotificacion, HttpStatus.OK);
-    }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotificacion(@PathVariable Long id) {
         notificacionLogic.deleteNotificacion(id);
@@ -53,11 +47,9 @@ public class NotificacionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-    // Enviar solicitud de amistad
-    @PostMapping("/sendFriendRequest")
-    public ResponseEntity<Void> sendFriendRequestNotification(@RequestParam Long usuarioId, @RequestParam Long likedUsuarioId) {
-        notificacionLogic.sendFriendRequestNotification(usuarioId, likedUsuarioId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @GetMapping("/usuario/{usuarioId}")
+    public ResponseEntity<List<Notificacion>> getNotificacionesByUsuario(@PathVariable Long usuarioId) {
+        List<Notificacion> notificaciones = notificacionLogic.getNotificacionesByUsuario(usuarioId);
+        return new ResponseEntity<>(notificaciones, HttpStatus.OK);
     }
 }

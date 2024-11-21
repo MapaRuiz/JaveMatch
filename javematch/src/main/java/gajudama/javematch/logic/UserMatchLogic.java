@@ -75,39 +75,6 @@ public class UserMatchLogic {
         return matchRepository.save(userMatch);
     }
     
-
-    //**Emparejamiento al azar**. Selecciona al azar otro usuario con prioridad a los intereses en común.
-    @Transactional
-    public UserMatch randomMatch(Long usuarioId) {
-        
-        // Verificación de existencia del usuario en el sistema
-        Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Obtener todos los usuarios excepto el actual
-        List<Usuario> allUsuarios = usuarioLogic.getAllUsuarios();
-        allUsuarios.remove(usuario);
-
-        // En caso de no haber otros usuarios disponibles, se lanza un error
-        if (allUsuarios.isEmpty()) {
-            throw new RuntimeException("No other users available for matching");
-        }
-
-        // Filtra usuarios con intereses comunes, si existen
-        List<Usuario> matchingUsuarios = usuarioLogic.findUsersWithMatchingInterests(usuarioId);
-
-        Usuario selectedUsuario;
-        if (!matchingUsuarios.isEmpty()) {
-            // Selecciona aleatoriamente entre los usuarios con intereses comunes
-            selectedUsuario = matchingUsuarios.get(new Random().nextInt(matchingUsuarios.size()));
-        } else {
-            // Si no hay coincidencias de intereses, selecciona aleatoriamente de todos los usuarios disponibles
-            selectedUsuario = allUsuarios.get(new Random().nextInt(allUsuarios.size()));
-        }
-
-        // Crea y retorna el emparejamiento con el usuario seleccionado
-        return createMatch(usuarioId, selectedUsuario.getUserId());
-    }
     
     public List<UserMatch> getMutualMatches(Long userId) {
         return matchRepository.findMutualMatches(userId);

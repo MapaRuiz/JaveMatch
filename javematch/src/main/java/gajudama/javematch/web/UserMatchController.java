@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 import gajudama.javematch.logic.NotificacionLogic;
 import gajudama.javematch.logic.UserMatchLogic;
+import gajudama.javematch.logic.UsuarioLogic;
 import gajudama.javematch.model.UserMatch;
+import gajudama.javematch.model.Usuario;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usermatch")
@@ -18,7 +21,6 @@ public class UserMatchController {
     @Autowired
     private UserMatchLogic userMatchLogic;
 
- 
     @GetMapping("/{id}")
     public ResponseEntity<UserMatch> getMatchById(@PathVariable Long id) {
         return userMatchLogic.getMatchById(id)
@@ -56,16 +58,11 @@ public class UserMatchController {
         return new ResponseEntity<>(match, HttpStatus.CREATED);
     }
     
-
-    // Endpoint específico para crear un match aleatorio
-    @PostMapping("/randomMatch")
-    public ResponseEntity<UserMatch> randomMatch(@RequestParam Long usuarioId) {
-        UserMatch match = userMatchLogic.randomMatch(usuarioId);
-        return new ResponseEntity<>(match, HttpStatus.CREATED);
-    }
+    @Autowired
+    private NotificacionController notificacionController;
     
     @Autowired
-    NotificacionLogic notificacionLogic;
+    private UsuarioLogic usuarioLogic;
 
     @PostMapping("/accept/{likedUsuarioId}")
     public ResponseEntity<?> acceptUserAndNotify(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
@@ -74,9 +71,9 @@ public class UserMatchController {
             UserMatch match = userMatchLogic.createMatch(usuarioId, likedUsuarioId);
             System.out.println("Match creado: " + match);
 
-            // Enviar una notificación al usuario aceptado
-            String mensaje = "¡Felicidades! El usuario con ID " + usuarioId + " te ha aceptado como match.";
-            notificacionLogic.sendMatchNotification(likedUsuarioId, mensaje);
+            Usuario user = usuarioLogic.getUsuarioById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            notificacionController.sendNotification(usuarioId, "¡Felicidades! " + user.getNombre() + " te ha dado like.");
 
             // Retornar el match creado y un mensaje de éxito
             return new ResponseEntity<>(match, HttpStatus.CREATED);

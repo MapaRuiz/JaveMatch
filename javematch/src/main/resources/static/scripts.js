@@ -104,7 +104,7 @@ let currentIndex = 0;
 
 async function fetchUsers() {
     try {
-        const response = await fetch('https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario')  
+        const response = await fetch('/api/usuario')  
         usuarios = await response.json();
 
         if (usuarios.length > 0) {
@@ -161,7 +161,7 @@ const loggedInUserId = localStorage.getItem('userId');
 // Función principal para obtener y mostrar los "matches"
 async function fetchMatches() {
     try {
-        const response = await fetch(`https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usermatch/mutual/${loggedInUserId}`);
+        const response = await fetch(`/api/usermatch/mutual/${loggedInUserId}`);
         const matches = await response.json();
         console.log("Matches fetched:", matches);
 
@@ -199,7 +199,7 @@ async function fetchMatches() {
 // Función para obtener los detalles del usuario
 async function fetchUserDetails(userId) {
     try {
-        const response = await fetch(`https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario/${userId}`);
+        const response = await fetch(`/api/usuario/${userId}`);
         return await response.json();
     } catch (error) {
         console.error("Error fetching user details:", error);
@@ -298,9 +298,10 @@ async function initializePage() {
     }
 }
 
-async function loadUserNotifications(userId) {
+async function loadUserNotifications() {
     try {
-        // Hacer un request a la API para obtener las notificaciones
+        const userId = localStorage.getItem("userId");
+        // Hacer un request a la API para obtener las notificaciones del usuario logueado
         const response = await fetch(`/api/notificacion/usuario/${userId}`);
         if (!response.ok) throw new Error('Error al obtener las notificaciones.');
 
@@ -311,7 +312,7 @@ async function loadUserNotifications(userId) {
         notificationsData.innerHTML = ''; // Limpiar las notificaciones previas
 
         if (notifications.length > 0) {
-            // Renderizar las notificaciones como una lista en formato JSON
+            // Renderizar las notificaciones como una lista
             notifications.forEach(notification => {
                 const notificationItem = document.createElement('div');
                 notificationItem.className = 'notification-item';
@@ -329,14 +330,6 @@ async function loadUserNotifications(userId) {
         console.error('Error al cargar las notificaciones:', error);
     }
 }
-
-// Añadir un event listener para el botón "Actualizar Notificaciones"
-document.getElementById('updateNotifications').addEventListener('click', async () => {
-    const userId = localStorage.getItem('userId');
-    if (userId) {
-        await loadUserNotifications(userId);
-    }
-});
 
 document.addEventListener("DOMContentLoaded", () => {
     const updatePlanBtn = document.getElementById("updatePlanBtn");

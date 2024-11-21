@@ -93,12 +93,6 @@ public class UsuarioController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-
-
-
-    // Endpoints para registrar y autenticar usuarios
-    @CrossOrigin(origins = "https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io")  // Permitir solicitudes de este origen
-
     @PostMapping("/register")
     public ResponseEntity<Usuario> registerUsuario(@RequestBody Usuario usuario) {
         System.out.println("Recibiendo solicitud para registrar usuario: " + usuario);  // Ver los datos recibidos

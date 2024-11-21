@@ -21,9 +21,7 @@ public class Notificacion {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaEnvio;  // Date the notification was sent
-
-    private Boolean estadoLectura;  // Whether the notification has been read
-
+    
     @ManyToOne
     private Usuario usuarioNotificado;  // The user who received the notification
 }
