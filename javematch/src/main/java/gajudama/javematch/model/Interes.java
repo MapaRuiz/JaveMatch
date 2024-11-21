@@ -19,7 +19,7 @@ import lombok.Data;
 public class Interes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long interesId;  // Cambié el nombre para mayor consistencia
+    private Long interesId;
 
     private String nombre;
 

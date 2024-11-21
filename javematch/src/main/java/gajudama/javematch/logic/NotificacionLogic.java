@@ -1,5 +1,6 @@
 package gajudama.javematch.logic;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,5 +71,20 @@ public class NotificacionLogic {
         sendNotification(usuarioId, "Would you like to be friends with " + likedUsuario.getNombre() + "?", false);
         sendNotification(likedUsuarioId, "Would you like to be friends with " + usuario.getNombre() + "?", false);
     }
+    
+    @Transactional
+    public void sendMatchNotification(Long usuarioNotificadoId, String mensaje) {
+        Usuario usuarioNotificado = usuarioLogic.getUsuarioById(usuarioNotificadoId)
+            .orElseThrow(() -> new RuntimeException("Usuario notificado no encontrado"));
+
+        Notificacion notificacion = new Notificacion();
+        notificacion.setUsuarioNotificado(usuarioNotificado);
+        notificacion.setMensaje(mensaje);
+        notificacion.setEstadoLectura(false); // Notificación sin leer
+        notificacion.setFechaEnvio(new Date());
+
+        notificacionRepository.save(notificacion);
+    }
+
     
 }

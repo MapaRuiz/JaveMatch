@@ -65,8 +65,8 @@ public class AmistadLogic {
             // Update user's friendships
             match.getUser1().getFriendshipsAsUser().add(amistad);
             match.getUser2().getFriendshipsAsFriend().add(amistad);
-            usuarioLogic.updateFriendshipsAsUser(match.getUser1().getUser_id(), match.getUser1().getFriendshipsAsUser());
-            usuarioLogic.updateFriendshipsAsFriend(match.getUser2().getUser_id(), match.getUser2().getFriendshipsAsFriend());
+            usuarioLogic.updateFriendshipsAsUser(match.getUser1().getUserId(), match.getUser1().getFriendshipsAsUser());
+            usuarioLogic.updateFriendshipsAsFriend(match.getUser2().getUserId(), match.getUser2().getFriendshipsAsFriend());
 
             return amistad;
         }

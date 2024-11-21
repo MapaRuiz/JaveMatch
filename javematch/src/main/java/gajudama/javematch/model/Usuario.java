@@ -22,12 +22,12 @@ import lombok.Data;
 
 @Data
 @Entity
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "user_id")
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "userId")
 
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long User_id;
+    private Long userId;
     
     private String nombre;
     
@@ -47,18 +47,6 @@ public class Usuario {
 
     @OneToMany(mappedBy = "reportado")
     private List<Reporte> reportsReceived;
-
-    @OneToMany(mappedBy = "usuarioLike")
-    private List<UserLike> likesGiven;
-
-    @OneToMany(mappedBy = "likedUsuario")
-    private List<UserLike> likesReceived;
-
-    @OneToMany(mappedBy = "usuarioRechazo")
-    private List<Rechazo> rejectionsGiven;
-
-    @OneToMany(mappedBy = "rechazadoUsuario")
-    private List<Rechazo> rejectionsReceived;
 
     @OneToMany(mappedBy = "usuarioAmistad")
     private List<Amistad> friendshipsAsUser;
@@ -85,12 +73,11 @@ public class Usuario {
     private Plan plan;
 
     @Override
-public String toString() {
-    return "Usuario{" +
-           "id=" + User_id +
-           ", nombre='" + nombre + '\'' +
-           '}';
-    // No llamar a 'getPlanes()' aquí si 'Planes' contiene una referencia a 'Usuario'
-}
-
+    public String toString() {
+        return "Usuario{" +
+            "id=" + userId +
+            ", nombre='" + nombre + '\'' +
+            '}';
+        
+    }
 }

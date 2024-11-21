@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import gajudama.javematch.logic.UsuarioLogic;
 import gajudama.javematch.model.Usuario;
 import gajudama.javematch.model.Interes;
-import gajudama.javematch.model.Plan;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +29,7 @@ public class UsuarioController {
 
         for (Usuario usuario : usuarios) {
             Map<String, Object> usuarioData = new HashMap<>();
-            usuarioData.put("user_id", usuario.getUser_id());
+            usuarioData.put("userId", usuario.getUserId());
             usuarioData.put("nombre", usuario.getNombre());
             
             // Suponiendo que tienes una lista de intereses en el objeto Usuario
@@ -53,11 +51,35 @@ public class UsuarioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getUsuarioById(@PathVariable Long id) {
-        return usuarioLogic.getUsuarioById(id)
-            .map(usuario -> new ResponseEntity<>(usuario, HttpStatus.OK))
-            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<Map<String, Object>> getUsuarioById(@PathVariable Long id) {
+    // Obtener el usuario por su ID
+    Optional<Usuario> usuarioOptional = usuarioLogic.getUsuarioById(id);
+    
+    if (usuarioOptional.isPresent()) {
+        Usuario usuario = usuarioOptional.get();
+        
+        // Crear el mapa para devolver los datos, incluyendo los intereses
+        Map<String, Object> usuarioData = new HashMap<>();
+        usuarioData.put("userId", usuario.getUserId());
+        usuarioData.put("nombre", usuario.getNombre());
+        
+        // Obtener los intereses y agregarlos al mapa
+        List<String> intereses = usuario.getIntereses().stream()
+                                        .map(Interes::getNombre) // Obtener el nombre del interés
+                                        .collect(Collectors.toList());
+        usuarioData.put("intereses", intereses);
+
+        // Agregar el plan del usuario (si existe)
+        if (usuario.getPlan() != null) {
+            usuarioData.put("plan", usuario.getPlan().getNombre()); // O ajusta según tu estructura de Plan
+        }
+
+        return new ResponseEntity<>(usuarioData, HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);  // Si no se encuentra el usuario
     }
+}
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> updateUsuario(@PathVariable Long id, @RequestBody Usuario usuarioDetails) {
@@ -78,7 +100,7 @@ public class UsuarioController {
     @CrossOrigin(origins = "https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io")  // Permitir solicitudes de este origen
 
     @PostMapping("/register")
-public ResponseEntity<Usuario> registerUsuario(@RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> registerUsuario(@RequestBody Usuario usuario) {
         System.out.println("Recibiendo solicitud para registrar usuario: " + usuario);  // Ver los datos recibidos
 
         try {
@@ -101,12 +123,12 @@ public ResponseEntity<Usuario> registerUsuario(@RequestBody Usuario usuario) {
         }
     }
 
-    // Endpoint para actualizar el plan de un usuario
-    @PostMapping("/upgradePlan")
-    public ResponseEntity<Usuario> upgradePlan(@RequestParam Long usuarioId, @RequestBody Plan newPlan) {
-        Usuario updatedUsuario = usuarioLogic.upgradePlan(usuarioId, newPlan);
+    @PostMapping("/actualizarPlan")
+    public ResponseEntity<Usuario> upgradePlan(@RequestParam Long usuarioId, @RequestParam Long planId) {
+        Usuario updatedUsuario = usuarioLogic.upgradePlan(usuarioId, planId);
         return new ResponseEntity<>(updatedUsuario, HttpStatus.OK);
     }
+
 
     // Endpoint para añadir un interés a un usuario
     @PostMapping("/addInteres")

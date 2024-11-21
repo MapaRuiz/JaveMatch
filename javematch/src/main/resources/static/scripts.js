@@ -66,7 +66,9 @@ async function loginUsuario(email) {
         if (response.ok) {
             const usuario = await response.json();  // Obtener los datos del usuario desde la respuesta
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.user_id);  // Guardar el ID del usuario en localStorage
+            localStorage.setItem('userId', usuario.userId);// Guardar el ID del usuario en localStorage
+            localStorage.setItem('userName', usuario.nombre);
+            alert('Login exitoso');  
             window.location.href = 'match.html';  // Redirigir a la página de match
             return usuario;  // Devuelvo el usuario para poder hacer más acciones si es necesario
         } else {
@@ -89,7 +91,7 @@ document.getElementById('loginForm')?.addEventListener('submit', async (event) =
         if (usuario) {
             // Si la respuesta fue exitosa, redirigir o hacer alguna otra acción
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.user_id);  // Guardar el ID del usuario en localStorage
+            localStorage.setItem('userId', usuario.userId);  // Guardar el ID del usuario en localStorage
             window.location.href = 'match.html';  // Redirigir a la página de match
         } else {
             // Si el login falla, mostrar mensaje de error
@@ -102,7 +104,7 @@ let currentIndex = 0;
 
 async function fetchUsers() {
     try {
-        const response = await fetch('https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario')  // URL de tu API de usuarios  // Asegúrate de que esta ruta es la correcta
+        const response = await fetch('https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario')  
         usuarios = await response.json();
 
         if (usuarios.length > 0) {
@@ -132,7 +134,7 @@ function showUser(index) {
         `;
 
         document.getElementById('accept-btn').addEventListener('click', () => {
-            const likedUsuarioId = user.user_id;  // Asegúrate de que esto tiene un valor válido
+            const likedUsuarioId = user.userId;  // Asegúrate de que esto tiene un valor válido
             if (likedUsuarioId) {
                 acceptUser(likedUsuarioId);
                 currentIndex++;
@@ -145,7 +147,7 @@ function showUser(index) {
         });
 
         document.getElementById('reject-btn').addEventListener('click', () => {
-            rejectUser(user.user_id);  // Usamos user.user_id aquí
+            rejectUser(user.userId);  // Usamos user.user_id aquí
             currentIndex++;
             if (currentIndex < usuarios.length) {
                 showUser(currentIndex);
@@ -154,31 +156,91 @@ function showUser(index) {
     }
 }
 
+const loggedInUserId = localStorage.getItem('userId');
 
+// Función principal para obtener y mostrar los "matches"
+async function fetchMatches() {
+    try {
+        const response = await fetch(`https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usermatch/mutual/${loggedInUserId}`);
+        const matches = await response.json();
+        console.log("Matches fetched:", matches);
 
+        const matchListElement = document.getElementById('user-list-match');
+        matchListElement.innerHTML = '';
 
+        if (matches.length > 0) {
+            for (const match of matches) {
+                const user2Details = await fetchUserDetails(match.user2);
+
+                const userCard = document.createElement('div');
+                userCard.classList.add('user-card');
+                userCard.innerHTML = `
+                    <h2>${user2Details.nombre || 'Nombre no disponible'}</h2>
+                    <p>Intereses: ${user2Details.intereses.join(', ') || 'No tiene intereses disponibles'}</p>
+                    <button class="call-btn">Iniciar videollamada</button>
+                `;
+
+                matchListElement.appendChild(userCard);
+
+                userCard.querySelector('.call-btn').addEventListener('click', () => {
+                    startVideoCall(match.user2.userId);
+                });
+            }
+        } else {
+            matchListElement.innerHTML = '<p>No hay coincidencias disponibles.</p>';
+        }
+    } catch (error) {
+        console.error("Error fetching matches:", error);
+        const matchListElement = document.getElementById('user-list-match');
+        matchListElement.innerHTML = '<p>Error al cargar coincidencias. Intenta de nuevo más tarde.</p>';
+    }
+}
+
+// Función para obtener los detalles del usuario
+async function fetchUserDetails(userId) {
+    try {
+        const response = await fetch(`https://8080-maparuiz-javematch-rzie4brrli7.ws-us116.gitpod.io/api/usuario/${userId}`);
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+        return { nombre: 'Nombre no disponible', intereses: [] };
+    }
+}
+
+// Función para redirigir a la página de videollamada
+function startVideoCall(userId) {
+    console.log(`Iniciando videollamada con el usuario ${userId}`);
+    window.location.href = `videollamada.html?userId=${userId}`;
+}
+
+// Llama a la función para cargar los matches
+fetchMatches();
 
 
 document.addEventListener('DOMContentLoaded', fetchUsers);
 
-// Cuando se hace click en "Aceptar"
 function acceptUser(likedUsuarioId) {
     const usuarioId = Number(localStorage.getItem('userId')); // Obtener el ID del usuario logueado desde localStorage
     console.log('usuarioId:', usuarioId);
+
     if (likedUsuarioId && usuarioId) { 
         fetch(`/api/usermatch/accept/${likedUsuarioId}?usuarioId=${usuarioId}`, {
             method: 'POST',
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al aceptar usuario");
+            }
+            return response.json();
+        })
         .then(data => {
-            console.log("Match creado:", data);
+            console.log("Match creado y notificación enviada:", data);
         })
         .catch(error => console.error("Error:", error));
     } else {
         console.error("El ID del usuario es inválido para aceptar:", likedUsuarioId);
     }
 }
-
 
 // Cuando se hace click en "Rechazar"
 function rejectUser(likedUsuarioId) {
@@ -193,17 +255,175 @@ function rejectUser(likedUsuarioId) {
     .catch(error => console.error("Error:", error));
 }
 
+document.addEventListener('DOMContentLoaded', initializePage);
 
-// Función para manejar el clic en Like
-function handleLike(userId) {
-    alert(`Has dado Like al usuario con ID ${userId}`);
-    // Aquí puedes agregar la lógica para manejar el "like"
+async function initializePage() {
+    const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde el localStorage
+    if (userId) {
+        try {
+            // Obtener datos del usuario de la API
+            const response = await fetch(`/api/usuario/${userId}`);
+            const userData = await response.json();
+
+            console.log(userData); // Verifica qué contiene userData
+
+            // Saludo personalizado y detalles del usuario
+            document.getElementById('userName').textContent = userData.nombre;
+            document.getElementById('userFullName').textContent = userData.nombre;
+
+            // Mostrar el plan del usuario
+            if (userData.plan) {
+                document.getElementById('userPlan').textContent = userData.plan;
+            } else {
+                document.getElementById('userPlan').textContent = 'Sin plan asignado';
+            }
+
+            // Lista de intereses
+            const interestsList = document.getElementById('userInterests');
+            interestsList.innerHTML = ''; // Limpiar la lista antes de agregar los nuevos intereses
+
+            if (userData.intereses && Array.isArray(userData.intereses)) {
+                const interestsHtml = userData.intereses.map(interes => `<li>${interes}</li>`).join('');
+                interestsList.innerHTML = interestsHtml;
+            } else {
+                interestsList.innerHTML = '<li>No tiene intereses registrados.</li>';
+            }
+
+            // Cargar notificaciones al inicializar la página
+            await loadUserNotifications(userId);
+
+        } catch (error) {
+            console.error('Error fetching user data:', error);
+        }
+    }
 }
 
-// Función para manejar el clic en Rechazar
-function handleReject(userId) {
-    alert(`Has rechazado al usuario con ID ${userId}`);
-    // Aquí puedes agregar la lógica para manejar el "rechazo"
+async function loadUserNotifications(userId) {
+    try {
+        // Hacer un request a la API para obtener las notificaciones
+        const response = await fetch(`/api/notificacion/usuario/${userId}`);
+        if (!response.ok) throw new Error('Error al obtener las notificaciones.');
+
+        const notifications = await response.json();
+        console.log(notifications); // Verificar qué notificaciones llegan desde la API
+
+        const notificationsData = document.getElementById('notificationsData');
+        notificationsData.innerHTML = ''; // Limpiar las notificaciones previas
+
+        if (notifications.length > 0) {
+            // Renderizar las notificaciones como una lista en formato JSON
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item';
+                notificationItem.innerHTML = `
+                    <p><strong>Mensaje:</strong> ${notification.mensaje}</p>
+                    <p><strong>Fecha:</strong> ${new Date(notification.fechaEnvio).toLocaleString()}</p>
+                    <hr>
+                `;
+                notificationsData.appendChild(notificationItem);
+            });
+        } else {
+            notificationsData.innerHTML = '<p>No tienes notificaciones.</p>';
+        }
+    } catch (error) {
+        console.error('Error al cargar las notificaciones:', error);
+    }
 }
 
-    
+// Añadir un event listener para el botón "Actualizar Notificaciones"
+document.getElementById('updateNotifications').addEventListener('click', async () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        await loadUserNotifications(userId);
+    }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const updatePlanBtn = document.getElementById("updatePlanBtn");
+    const updatePlanSelect = document.getElementById("updatePlan");
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        console.error("No se encontró userId en el localStorage.");
+        alert("Error: No se puede actualizar el plan sin identificar al usuario.");
+        return;
+    }
+
+    async function updatePlan() {
+        const planId = updatePlanSelect.value; 
+
+        if (!planId) {
+            alert("Por favor selecciona un plan antes de continuar.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/usuario/actualizarPlan?usuarioId=${userId}&planId=${planId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                console.log("Usuario actualizado:", updatedUser);
+
+                // Actualizar la interfaz con el nuevo plan
+                document.getElementById("userPlan").innerText = updatedUser.plan.nombre;
+                alert("Plan actualizado con éxito.");
+            } else {
+                console.error("Error en la respuesta del servidor:", response.status);
+                alert("Error al actualizar el plan. Inténtalo nuevamente.");
+            }
+        } catch (error) {
+            console.error("Error en la solicitud:", error);
+            alert("Hubo un problema al procesar la solicitud. Por favor, inténtalo nuevamente.");
+        }
+    }
+
+    // Asignar evento al botón de actualizar
+    updatePlanBtn.addEventListener("click", updatePlan);
+});
+
+document.getElementById("addInterest").addEventListener("click", async () => {
+    const newInterestInput = document.getElementById("newInterest");
+    const newInterestName = newInterestInput.value.trim();
+
+    if (!newInterestName) {
+        alert("Por favor, introduce un interés válido.");
+        return;
+    }
+
+    const usuarioId = localStorage.getItem("userId"); 
+    // Cuerpo del interés a enviar al backend
+    const interestData = {
+        nombre: newInterestName,
+    };
+
+    try {
+        // Crear el interés y vincularlo al usuario
+        const response = await fetch(`/api/usuario/addInteres?usuarioId=${usuarioId}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(interestData),
+        });
+
+        if (response.ok) {
+            const updatedUser = await response.json();
+            alert(`Interés "${newInterestName}" añadido con éxito.`);
+            newInterestInput.value = ""; 
+            console.log("Usuario actualizado:", updatedUser);
+            await initializePage();
+        } else {
+            const error = await response.json();
+            console.error("Error al agregar el interés:", error);
+            alert("No se pudo añadir el interés. Intenta de nuevo.");
+        }
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        alert("Ocurrió un error al procesar la solicitud.");
+    }
+});

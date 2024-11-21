@@ -47,12 +47,12 @@ public class NotificacionController {
         return new ResponseEntity<>(notificaciones, HttpStatus.OK);
     }
 
-    // Enviar una notificación genérica
     @PostMapping("/send")
     public ResponseEntity<Void> sendNotification(@RequestParam Long usuarioId, @RequestParam String mensaje) {
         notificacionLogic.sendNotification(usuarioId, mensaje, false);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 
     // Enviar solicitud de amistad
     @PostMapping("/sendFriendRequest")
