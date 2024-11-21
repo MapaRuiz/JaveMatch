@@ -14,8 +14,6 @@ import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.model.Amistad;
 import gajudama.javematch.model.Interes;
 import gajudama.javematch.model.Plan;
-import gajudama.javematch.model.Rechazo;
-import gajudama.javematch.model.UserLike;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Usuario;
 import jakarta.transaction.Transactional;
@@ -54,23 +52,6 @@ public class UsuarioLogic {
         return usuarioRepository.findAll();
     }
 
-    // Nuevos métodos para actualizar listas específicas
-    @Transactional
-    public Usuario updateLikesGiven(Long id, List<UserLike> likesGiven) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setLikesGiven(likesGiven);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-    }
-
-    @Transactional
-    public Usuario updateLikesReceived(Long id, List<UserLike> likesReceived) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setLikesReceived(likesReceived);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-    }
-
     @Transactional
     public Usuario updateMatchesAsUser1(Long id, List<UserMatch> matchesAsUser1) {
         return usuarioRepository.findById(id).map(usuario -> {
@@ -99,23 +80,6 @@ public class UsuarioLogic {
     public Usuario updateFriendshipsAsFriend(Long id, List<Amistad> friendshipsAsFriend) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setFriendshipsAsFriend(friendshipsAsFriend);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-
-    }
-
-    @Transactional
-    public Usuario updateRejectionsGiven(Long id, List<Rechazo> usuarioRechazo) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setRejectionsGiven(usuarioRechazo);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-    }
-
-    @Transactional
-    public Usuario updateRejectionsReceived(Long id, List<Rechazo> rechazoUsuario) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setRejectionsReceived(rechazoUsuario);
             return usuarioRepository.save(usuario);
         }).orElseThrow(() -> new RuntimeException("Usuario not found"));
 

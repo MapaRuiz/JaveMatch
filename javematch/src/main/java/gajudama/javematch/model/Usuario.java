@@ -48,18 +48,6 @@ public class Usuario {
     @OneToMany(mappedBy = "reportado")
     private List<Reporte> reportsReceived;
 
-    @OneToMany(mappedBy = "usuarioLike")
-    private List<UserLike> likesGiven;
-
-    @OneToMany(mappedBy = "likedUsuario")
-    private List<UserLike> likesReceived;
-
-    @OneToMany(mappedBy = "usuarioRechazo")
-    private List<Rechazo> rejectionsGiven;
-
-    @OneToMany(mappedBy = "rechazadoUsuario")
-    private List<Rechazo> rejectionsReceived;
-
     @OneToMany(mappedBy = "usuarioAmistad")
     private List<Amistad> friendshipsAsUser;
 
