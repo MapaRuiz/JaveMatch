@@ -258,22 +258,22 @@ function rejectUser(likedUsuarioId) {
 document.addEventListener('DOMContentLoaded', initializePage);
 
 async function initializePage() {
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde el localStorage
     if (userId) {
         try {
             // Obtener datos del usuario de la API
             const response = await fetch(`/api/usuario/${userId}`);
             const userData = await response.json();
 
-            console.log(userData);  // Verifica qué contiene userData
+            console.log(userData); // Verifica qué contiene userData
 
             // Saludo personalizado y detalles del usuario
             document.getElementById('userName').textContent = userData.nombre;
             document.getElementById('userFullName').textContent = userData.nombre;
 
-            // Verificar si 'userData.plan' tiene el atributo 'nombre' y mostrarlo
+            // Mostrar el plan del usuario
             if (userData.plan) {
-                document.getElementById('userPlan').textContent = userData.plan;  // Asegúrate de que `plan` tenga un valor
+                document.getElementById('userPlan').textContent = userData.plan;
             } else {
                 document.getElementById('userPlan').textContent = 'Sin plan asignado';
             }
@@ -282,7 +282,6 @@ async function initializePage() {
             const interestsList = document.getElementById('userInterests');
             interestsList.innerHTML = ''; // Limpiar la lista antes de agregar los nuevos intereses
 
-            // Verificamos si 'userData.intereses' existe y contiene elementos
             if (userData.intereses && Array.isArray(userData.intereses)) {
                 const interestsHtml = userData.intereses.map(interes => `<li>${interes}</li>`).join('');
                 interestsList.innerHTML = interestsHtml;
@@ -290,11 +289,54 @@ async function initializePage() {
                 interestsList.innerHTML = '<li>No tiene intereses registrados.</li>';
             }
 
+            // Cargar notificaciones al inicializar la página
+            await loadUserNotifications(userId);
+
         } catch (error) {
             console.error('Error fetching user data:', error);
         }
     }
 }
+
+async function loadUserNotifications(userId) {
+    try {
+        // Hacer un request a la API para obtener las notificaciones
+        const response = await fetch(`/api/notificacion/usuario/${userId}`);
+        if (!response.ok) throw new Error('Error al obtener las notificaciones.');
+
+        const notifications = await response.json();
+        console.log(notifications); // Verificar qué notificaciones llegan desde la API
+
+        const notificationsData = document.getElementById('notificationsData');
+        notificationsData.innerHTML = ''; // Limpiar las notificaciones previas
+
+        if (notifications.length > 0) {
+            // Renderizar las notificaciones como una lista en formato JSON
+            notifications.forEach(notification => {
+                const notificationItem = document.createElement('div');
+                notificationItem.className = 'notification-item';
+                notificationItem.innerHTML = `
+                    <p><strong>Mensaje:</strong> ${notification.mensaje}</p>
+                    <p><strong>Fecha:</strong> ${new Date(notification.fechaEnvio).toLocaleString()}</p>
+                    <hr>
+                `;
+                notificationsData.appendChild(notificationItem);
+            });
+        } else {
+            notificationsData.innerHTML = '<p>No tienes notificaciones.</p>';
+        }
+    } catch (error) {
+        console.error('Error al cargar las notificaciones:', error);
+    }
+}
+
+// Añadir un event listener para el botón "Actualizar Notificaciones"
+document.getElementById('updateNotifications').addEventListener('click', async () => {
+    const userId = localStorage.getItem('userId');
+    if (userId) {
+        await loadUserNotifications(userId);
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const updatePlanBtn = document.getElementById("updatePlanBtn");

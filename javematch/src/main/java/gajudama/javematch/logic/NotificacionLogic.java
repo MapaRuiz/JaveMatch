@@ -86,5 +86,5 @@ public class NotificacionLogic {
         notificacionRepository.save(notificacion);
     }
 
-
+    
 }

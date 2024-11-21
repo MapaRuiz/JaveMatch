@@ -6,5 +6,4 @@ import gajudama.javematch.model.Notificacion;
 
 @Repository
 public interface NotificacionRepository extends JpaRepository<Notificacion, Long> {
-    
 }
