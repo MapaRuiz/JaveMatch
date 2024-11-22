@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.InteresRepository;
 import gajudama.javematch.accesoDatos.PlanRepository;
 import gajudama.javematch.accesoDatos.UsuarioRepository;
-import gajudama.javematch.model.Amistad;
 import gajudama.javematch.model.Interes;
 import gajudama.javematch.model.Plan;
 import gajudama.javematch.model.UserMatch;
@@ -66,23 +65,6 @@ public class UsuarioLogic {
             usuario.setMatchesAsUser2(matchesAsUser2);
             return usuarioRepository.save(usuario);
         }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-    }
-
-    @Transactional
-    public Usuario updateFriendshipsAsUser(Long id, List<Amistad> friendshipsAsUser) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setFriendshipsAsUser(friendshipsAsUser);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-    }
-
-    @Transactional
-    public Usuario updateFriendshipsAsFriend(Long id, List<Amistad> friendshipsAsFriend) {
-        return usuarioRepository.findById(id).map(usuario -> {
-            usuario.setFriendshipsAsFriend(friendshipsAsFriend);
-            return usuarioRepository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuario not found"));
-
     }
 
     @Autowired

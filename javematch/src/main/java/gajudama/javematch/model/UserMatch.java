@@ -30,8 +30,6 @@ public class UserMatch {
     @Temporal(TemporalType.DATE)
     private Date fechaMatch;  // Match date
 
-    private Boolean amistad;  // Indicates if the match is a friendship
-
     @ManyToOne
     private Videollamada videollamada_Match;  //Videollamada associated with the match
 }

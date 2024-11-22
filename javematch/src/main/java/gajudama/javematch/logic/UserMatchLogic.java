@@ -3,7 +3,6 @@ package gajudama.javematch.logic;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ public class UserMatchLogic {
     public UserMatch updateMatch(Long id, UserMatch matchDetails) {
         return matchRepository.findById(id).map(match -> {
             match.setFechaMatch(matchDetails.getFechaMatch());
-            match.setAmistad(matchDetails.getAmistad());
             match.setVideollamada_Match(matchDetails.getVideollamada_Match());
             return matchRepository.save(match);
         }).orElseThrow(() -> new RuntimeException("Match not found"));
@@ -51,8 +49,6 @@ public class UserMatchLogic {
     private UsuarioLogic usuarioLogic;
     @Autowired
     private VideollamadaLogic videollamadaLogic;
-    @Autowired
-    private NotificacionLogic notificacionLogic;
 
     @Transactional
     public UserMatch createMatch(Long usuarioId, Long likedUsuarioId) {
@@ -67,10 +63,6 @@ public class UserMatchLogic {
         userMatch.setUser1(usuario);
         userMatch.setUser2(likedUsuario);
         userMatch.setFechaMatch(new Date());  // Set the match date
-        userMatch.setAmistad(false);  // Inicialmente no es amistad
-    
-        
-    
         // Guardar el match en la base de datos
         return matchRepository.save(userMatch);
     }
@@ -78,6 +70,6 @@ public class UserMatchLogic {
     
     public List<UserMatch> getMutualMatches(Long userId) {
         return matchRepository.findMutualMatches(userId);
-    }    
+    }
 
 }

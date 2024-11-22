@@ -48,12 +48,6 @@ public class Usuario {
     @OneToMany(mappedBy = "reportado")
     private List<Reporte> reportsReceived;
 
-    @OneToMany(mappedBy = "usuarioAmistad")
-    private List<Amistad> friendshipsAsUser;
-
-    @OneToMany(mappedBy = "amigoUsuario")
-    private List<Amistad> friendshipsAsFriend;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_interes",

@@ -73,7 +73,7 @@ public class UserMatchController {
 
             Usuario user = usuarioLogic.getUsuarioById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            notificacionController.sendNotification(usuarioId, "¡Felicidades! " + user.getNombre() + " te ha dado like.");
+            notificacionController.sendNotification(likedUsuarioId, "¡Felicidades! " + user.getNombre() + " te ha dado like.");
 
             // Retornar el match creado y un mensaje de éxito
             return new ResponseEntity<>(match, HttpStatus.CREATED);
