@@ -9,6 +9,7 @@ import gajudama.javematch.model.Notificacion;
 import gajudama.javematch.model.Usuario;
 import jakarta.transaction.Transactional;
 
+//Clase que controla la logica de la clase de notificación
 @Service
 public class NotificacionLogic {
     
