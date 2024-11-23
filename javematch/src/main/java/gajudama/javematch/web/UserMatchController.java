@@ -51,7 +51,7 @@ public class UserMatchController {
     private UsuarioLogic usuarioLogic;
 
     @PostMapping("/accept/{likedUsuarioId}")
-    public ResponseEntity<?> acceptUserAndNotify(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
+    public ResponseEntity<UserMatch> acceptUserAndNotify(@PathVariable Long likedUsuarioId, @RequestParam Long usuarioId) {
         try {
             // Crear el match entre los usuarios
             UserMatch match = userMatchLogic.createMatch(usuarioId, likedUsuarioId);

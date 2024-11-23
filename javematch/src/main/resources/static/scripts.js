@@ -90,6 +90,46 @@ document.getElementById('loginForm')?.addEventListener('submit', async (event) =
         }
 });
 
+document.addEventListener('DOMContentLoaded', fetchUsers);
+const loggedInUserId = localStorage.getItem('userId');
+
+//Aceptar Usuarios
+
+function acceptUser(likedUsuarioId) {
+    console.log('usuarioId:', loggedInUserId);
+
+    if (likedUsuarioId && loggedInUserId) { 
+        fetch(`/api/usermatch/accept/${likedUsuarioId}?usuarioId=${loggedInUserId}`, {
+            method: 'POST',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Error al aceptar usuario");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Match creado y notificación enviada:", data);
+        })
+        .catch(error => console.error("Error:", error));
+    } else {
+        console.error("El ID del usuario es inválido para aceptar:", likedUsuarioId);
+    }
+}
+
+//Rechazar Usuarios
+
+function rejectUser(likedUsuarioId) {
+    fetch(`/api/usermatch/reject/${likedUsuarioId}`, {
+        method: 'POST',
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log(data);
+    })
+    .catch(error => console.error("Error:", error));
+}
+
 //Mostrar usuarios
 
 let usuarios = [];
@@ -149,8 +189,6 @@ function showUser(index) {
 }
 
 //Mostrar matches
-
-const loggedInUserId = localStorage.getItem('userId');
 
 async function fetchMatches() {
     try {
@@ -216,46 +254,6 @@ async function fetchUserDetails(userId) {
 }
 
 fetchMatches();
-
-document.addEventListener('DOMContentLoaded', fetchUsers);
-
-//Aceptar Usuarios
-
-function acceptUser(likedUsuarioId) {
-    console.log('usuarioId:', loggedInUserId);
-
-    if (likedUsuarioId && usuarioId) { 
-        fetch(`/api/usermatch/accept/${likedUsuarioId}?usuarioId=${usuarioId}`, {
-            method: 'POST',
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al aceptar usuario");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Match creado y notificación enviada:", data);
-        })
-        .catch(error => console.error("Error:", error));
-    } else {
-        console.error("El ID del usuario es inválido para aceptar:", likedUsuarioId);
-    }
-}
-
-//Rechazar Usuarios
-
-function rejectUser(likedUsuarioId) {
-    fetch(`/api/usermatch/reject/${likedUsuarioId}`, {
-        method: 'POST',
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log(data);
-    })
-    .catch(error => console.error("Error:", error));
-}
-
 
 // Función para redirigir a la página de videollamada
 function startVideoCall(userId) {
