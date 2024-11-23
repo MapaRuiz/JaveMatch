@@ -33,8 +33,6 @@ public class UserMatchLogic {
         }).orElseThrow(() -> new RuntimeException("Match not found"));
     }
 
-    
-
     @Transactional
     public UserMatch createMatch(Long usuarioId, Long likedUsuarioId) {
         if (usuarioId.equals(likedUsuarioId)) {

@@ -255,10 +255,16 @@ function rejectUser(likedUsuarioId) {
     .catch(error => console.error("Error:", error));
 }
 
-//Mostrar perfil
 
+// Función para redirigir a la página de videollamada
+function startVideoCall(userId) {
+    console.log(`Iniciando videollamada con el usuario ${userId}`);
+    window.location.href = `videollamada.html?userId=${userId}`;
+}
+
+// Llama a la función para cargar los matches
 document.addEventListener('DOMContentLoaded', initializePage);
-
+//Mostrar perfil
 async function initializePage() {
     const userId = localStorage.getItem('userId');
     if (userId) {
