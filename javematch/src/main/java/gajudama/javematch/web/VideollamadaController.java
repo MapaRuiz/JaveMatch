@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import gajudama.javematch.logic.UserMatchLogic;
 import gajudama.javematch.logic.VideollamadaLogic;
+import gajudama.javematch.logic.UsuarioLogic;
 import gajudama.javematch.model.Videollamada;
 import gajudama.javematch.model.Juego;
+import gajudama.javematch.model.Usuario;
+import java.util.Optional;
 import gajudama.javematch.model.UserMatch;
 
 import java.time.LocalDateTime;
@@ -24,6 +27,8 @@ public class VideollamadaController {
     private VideollamadaLogic videollamadaLogic;
     @Autowired
     private UserMatchLogic userMatchLogic;
+    @Autowired
+    private UsuarioLogic userLogic;
 
     @PostMapping
     public ResponseEntity<Videollamada> createVideollamada(@RequestBody Videollamada videollamada) {
@@ -92,4 +97,19 @@ public class VideollamadaController {
         Videollamada updatedVideollamada = videollamadaLogic.addJuegoToVideollamada(videollamadaId, juego);
         return new ResponseEntity<>(updatedVideollamada, HttpStatus.OK);
     }
+
+   @GetMapping("/match/{matchId}")
+public ResponseEntity<?> getVideollamadaByMatchId(@PathVariable Long matchId) {
+    Videollamada videollamada = videollamadaLogic.getVideollamadaByMatchId(matchId);
+
+    if (videollamada != null) {
+        // Asegúrate de cargar los datos completos de user2 si solo está el ID
+        if (videollamada.getMatch().getUser2().getUserId() instanceof Long) {
+           Usuario user2 = userLogic.getUsuarioporID((Long) videollamada.getMatch().getUser2().getUserId());
+            videollamada.getMatch().setUser2(user2);
+        }
+        return ResponseEntity.ok(videollamada);
+    }
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+}
 }

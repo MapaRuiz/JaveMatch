@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.VideollamadaRepository;
+import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.model.Juego;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Videollamada;
@@ -18,6 +19,7 @@ import jakarta.transaction.Transactional;
 public class VideollamadaLogic {
     @Autowired
     private VideollamadaRepository videollamadaRepository;
+    private UsuarioRepository userRepository;
 
     @Transactional
     public Videollamada createVideollamada(Videollamada videollamada) {
@@ -26,6 +28,15 @@ public class VideollamadaLogic {
 
     public Optional<Videollamada> getVideollamadaById(Long id) {
         return videollamadaRepository.findById(id);
+    }
+
+   
+
+    // Método que obtiene la videollamada asociada a un match
+    public Videollamada  getVideollamadaByMatchId(Long matchId) {
+        Optional <Videollamada> videoOptional = videollamadaRepository.findByMatch_UserMatchId(matchId);
+        return videoOptional.get();
+        
     }
 
     @Transactional

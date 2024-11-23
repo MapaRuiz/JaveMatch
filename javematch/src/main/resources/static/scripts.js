@@ -184,7 +184,8 @@ async function fetchMatches() {
                         if (videoCallResponse.ok) {
                             const videoCallData = await videoCallResponse.json();
                             alert(`Videollamada creada exitosamente con ID: ${videoCallData.id}`);
-                            window.location.href = `videollamada.html?matchId=${matchId}`;
+                            localStorage.setItem('matchId', matchId);
+                            window.location.href = `videollamada.html`;
                         } else {
                             alert("Hubo un error al crear la videollamada.");
                         }
@@ -421,3 +422,52 @@ document.getElementById("addInterest").addEventListener("click", async () => {
         alert("Ocurrió un error al procesar la solicitud.");
     }
 });
+
+
+async function MostrarVideollamada() {
+    const matchId = 1; // Cambiar si es dinámico
+
+    if (!matchId) {
+        alert("No se ha encontrado el matchId.");
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/videollamada/match/${matchId}`);
+        const videollamadaData = await response.json();
+
+        if (response.ok) {
+            console.log("Datos de videollamada:", videollamadaData);
+
+            // Actualiza la fecha y el estado de la videollamada
+            document.getElementById('fecha-llamada').textContent = new Date(videollamadaData.fechaVideollamada).toLocaleString();
+            document.getElementById('estado-llamada').textContent = videollamadaData.estado;
+
+            // Manejo de los usuarios del match
+            const user1Details = videollamadaData.match.user1;
+            const user2Details = videollamadaData.match.user2;
+
+            const userListDiv = document.getElementById('user-list-videollamada');
+
+            if (typeof user2Details === 'object') {
+                // user2 es un objeto, muestra su nombre
+                userListDiv.innerHTML = `
+                    <p><strong>${user1Details.nombre}</strong> (Usuario 1)</p>
+                    <p><strong>${user2Details.nombre}</strong> (Usuario 2)</p>
+                `;
+            } else {
+                // user2 es un ID, muestra solo el ID
+                userListDiv.innerHTML = `
+                    <p><strong>${user1Details.nombre}</strong> (Usuario 1)</p>
+                    <p><strong>Usuario 2 ID: ${user2Details}</strong></p>
+                `;
+            }
+        } else {
+            alert("Error al obtener la videollamada: " + response.status);
+        }
+    } catch (error) {
+        console.error("Error al cargar la videollamada:", error);
+        alert("Ocurrió un error al cargar la videollamada.");
+    }
+}
+

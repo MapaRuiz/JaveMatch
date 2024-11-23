@@ -12,6 +12,9 @@ import jakarta.persistence.TemporalType;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 @Data
 @Entity
@@ -26,6 +29,7 @@ public class Videollamada {
     private String estado;
 
     @ManyToMany
+    
     @JoinTable(
         name = "videollamada_juego",
         joinColumns = @JoinColumn(name = "Videollamada_id"),
@@ -34,6 +38,8 @@ public class Videollamada {
     private List<Juego> juegos;
 
 
-    @OneToOne(mappedBy = "videollamada_Match")
+    @OneToOne
+     @JsonManagedReference 
+    @JoinColumn(name = "user_match_id") 
     private UserMatch match;  // Match linked to this Videollamada
 }

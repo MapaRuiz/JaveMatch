@@ -31,6 +31,14 @@ public class UsuarioLogic {
     public Optional<Usuario> getUsuarioById(Long id) {
         return usuarioRepository.findById(id);
     }
+    public Usuario getUsuarioporID(Long id) {
+          Optional<Usuario> userOptional = usuarioRepository.findById(id);
+          if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else {
+            throw new RuntimeException("Usuario no encontrado con ID: " + id);
+        }
+    }
 
     @Transactional
     public Usuario updateUsuario(Long id, Usuario usuarioDetails) {

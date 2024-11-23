@@ -40,3 +40,10 @@ INSERT INTO usuario_interes (usuario_id, interes_id) VALUES (4, 3);  -- Videojue
 -- Pedro Sanchez tiene intereses en Deportes y Lectura
 INSERT INTO usuario_interes (usuario_id, interes_id) VALUES (5, 1);  -- Deportes
 INSERT INTO usuario_interes (usuario_id, interes_id) VALUES (5, 5);  -- Lectura
+
+INSERT INTO user_match (user1_user_id, user2_user_id, fecha_match) 
+VALUES (1, 2, CURRENT_DATE);  -- Relacionar los usuarios con la fecha del matc
+
+-- Insertar una videollamada asociada con el match
+INSERT INTO videollamada (fecha_videollamada, estado, user_match_id) 
+VALUES (CURRENT_TIMESTAMP, 'Iniciada', 1);  -- Asociar la videollamada con el match creado (match_id = 1)

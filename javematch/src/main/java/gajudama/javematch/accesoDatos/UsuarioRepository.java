@@ -14,6 +14,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByCorreo(String correo);
     @SuppressWarnings("null")
     Optional<Usuario> findById (Long id);
+   
 
     List<Usuario> findByInteresesIn(List<Interes> intereses);
 }
