@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.PlanRepository;
 import gajudama.javematch.model.Plan;
 
+//Clase que maneja la logica de la clase Plan
 @Service
 public class PlanLogic {
     @Autowired
