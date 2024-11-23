@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import gajudama.javematch.accesoDatos.UserMatchRepository;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Usuario;
-import gajudama.javematch.model.Videollamada;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -18,15 +17,13 @@ public class UserMatchLogic {
     @Autowired
     private UserMatchRepository matchRepository;
 
-    @Transactional
-    public UserMatch createMatch(UserMatch match) {
-        return matchRepository.save(match);
-    }
+    @Autowired
+    private UsuarioLogic usuarioLogic;
 
     public Optional<UserMatch> getMatchById(Long id) {
         return matchRepository.findById(id);
     }
-
+    
     @Transactional
     public UserMatch updateMatch(Long id, UserMatch matchDetails) {
         return matchRepository.findById(id).map(match -> {
@@ -36,34 +33,23 @@ public class UserMatchLogic {
         }).orElseThrow(() -> new RuntimeException("Match not found"));
     }
 
-    @Transactional
-    public void deleteMatch(Long id) {
-        matchRepository.deleteById(id);
-    }
-
-    public List<UserMatch> getAllMatches() {
-        return matchRepository.findAll();
-    }
-
-    @Autowired
-    private UsuarioLogic usuarioLogic;
-    @Autowired
-    private VideollamadaLogic videollamadaLogic;
+    
 
     @Transactional
     public UserMatch createMatch(Long usuarioId, Long likedUsuarioId) {
-        // Obtener usuarios 
+        if (usuarioId.equals(likedUsuarioId)) {
+            throw new RuntimeException("No puedes hacer match contigo mismo.");
+        }
+
         Usuario usuario = usuarioLogic.getUsuarioById(usuarioId)
             .orElseThrow(() -> new RuntimeException("User not found"));
         Usuario likedUsuario = usuarioLogic.getUsuarioById(likedUsuarioId)
             .orElseThrow(() -> new RuntimeException("Liked user not found"));
     
-        // Crear un nuevo objeto UserMatch
         UserMatch userMatch = new UserMatch();
         userMatch.setUser1(usuario);
         userMatch.setUser2(likedUsuario);
-        userMatch.setFechaMatch(new Date());  // Set the match date
-        // Guardar el match en la base de datos
+        userMatch.setFechaMatch(new Date());
         return matchRepository.save(userMatch);
     }
     

@@ -1,44 +1,37 @@
-// ---- Funciones para index.html y login.html ---- //
+//Registro
 document.getElementById('registerForm')?.addEventListener('submit', async function(event) {
-    event.preventDefault();  // Prevenir el comportamiento por defecto del formulario
+    event.preventDefault();
 
-    // Obtener los valores de los campos
     const nombre = document.getElementById('name').value;
     const correo = document.getElementById('email').value;
     const interesesSeleccionados = Array.from(document.querySelectorAll('#interests input:checked'))
         .map(checkbox => checkbox.value);
     const planMapping = {
-        "Bronze": 1,  // "Bronze" es el plan 1
-        "Silver": 2,  // "Silver" es el plan 2
-        "Gold": 3     // "Gold" es el plan 3
+        "Bronze": 1,
+        "Silver": 2,
+        "Gold": 3
     };
 
-    // Obtén el nombre del plan seleccionado desde el formulario
-    const planName = document.getElementById('plan').value;  // "Bronze", "Silver", "Gold"
-    
-    // Obtén el ID del plan usando el mapeo
-    const plan_id = planMapping[planName];  // Esto te da el número correspondiente (1, 2, o 3)
-    
-    // Crear el objeto con los datos del usuario
+    const planName = document.getElementById('plan').value;
+    const plan_id = planMapping[planName];
     const usuarioData = {
         nombre: nombre,
         correo: correo,
         intereses: interesesSeleccionados.map(interes => ({ nombre: interes })),
-        plan: { plan_id: plan_id }  // Aquí se usa el ID numérico del plan
+        plan: { plan_id: plan_id }
     };
 
-    // Realizar la solicitud POST
     try {
         const response = await fetch('/api/usuario/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(usuarioData)  // Enviar los datos como JSON
+            body: JSON.stringify(usuarioData)
         });
 
         if (response.ok) {
-            const data = await response.json();  // Obtener la respuesta JSON
+            const data = await response.json();
             console.log('Usuario registrado exitosamente:', data);
             alert('Usuario registrado exitosamente');
         } else {
@@ -53,7 +46,7 @@ document.getElementById('registerForm')?.addEventListener('submit', async functi
     document.getElementById('registerForm').reset();
 });
 
-// Loguear usuario
+//Login
 async function loginUsuario(email) {
     try {
         const response = await fetch(`/api/usuario/login?email=${email}`, {
@@ -64,44 +57,43 @@ async function loginUsuario(email) {
         });
 
         if (response.ok) {
-            const usuario = await response.json();  // Obtener los datos del usuario desde la respuesta
+            const usuario = await response.json();
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.userId);// Guardar el ID del usuario en localStorage
+            localStorage.setItem('userId', usuario.userId);
             localStorage.setItem('userName', usuario.nombre);
-            alert('Login exitoso');  
-            window.location.href = 'match.html';  // Redirigir a la página de match
-            return usuario;  // Devuelvo el usuario para poder hacer más acciones si es necesario
+            alert('Login exitoso');
+            window.location.href = 'match.html';
+            return usuario;
         } else {
             const errorData = await response.text();
-            alert(errorData);  // Muestra el mensaje de error devuelto por el backend
-            return null;  // En caso de error, no retorno ningún usuario
+            alert(errorData);
+            return null;
         }
     } catch (error) {
         console.error('Error al hacer la solicitud de login:', error);
         alert('Hubo un problema al intentar hacer login');
-        return null;  // En caso de error en la solicitud, no retorno ningún usuario
+        return null;
     }
 }
 
 document.getElementById('loginForm')?.addEventListener('submit', async (event) => {
-    event.preventDefault();  // Prevenir el envío normal del formulario
-    const correo = document.getElementById('email').value;  // Obtener el correo del formulario
-    const usuario = await loginUsuario(correo);  // Llamar a la función de login
+    event.preventDefault();
+    const correo = document.getElementById('email').value;
+    const usuario = await loginUsuario(correo);
 
         if (usuario) {
-            // Si la respuesta fue exitosa, redirigir o hacer alguna otra acción
             alert('Login exitoso');
-            localStorage.setItem('userId', usuario.userId);  // Guardar el ID del usuario en localStorage
-            window.location.href = 'match.html';  // Redirigir a la página de match
+            localStorage.setItem('userId', usuario.userId);
+            window.location.href = 'match.html';
         } else {
-            // Si el login falla, mostrar mensaje de error
             alert('Login fallido');
         }
 });
 
+//Mostrar usuarios
+
 let usuarios = [];
 let currentIndex = 0;
-
 async function fetchUsers() {
     try {
         const response = await fetch('/api/usuario')  
@@ -117,7 +109,7 @@ async function fetchUsers() {
 
 function showUser(index) {
     const user = usuarios[index];
-    console.log(user);  // Verifica qué valores tiene el objeto user
+    console.log(user);
     const userListElement = document.getElementById('user-list');
 
     if (user) {
@@ -134,7 +126,7 @@ function showUser(index) {
         `;
 
         document.getElementById('accept-btn').addEventListener('click', () => {
-            const likedUsuarioId = user.userId;  // Asegúrate de que esto tiene un valor válido
+            const likedUsuarioId = user.userId;
             if (likedUsuarioId) {
                 acceptUser(likedUsuarioId);
                 currentIndex++;
@@ -147,7 +139,7 @@ function showUser(index) {
         });
 
         document.getElementById('reject-btn').addEventListener('click', () => {
-            rejectUser(user.userId);  // Usamos user.user_id aquí
+            rejectUser(user.userId);
             currentIndex++;
             if (currentIndex < usuarios.length) {
                 showUser(currentIndex);
@@ -156,9 +148,10 @@ function showUser(index) {
     }
 }
 
+//Mostrar matches
+
 const loggedInUserId = localStorage.getItem('userId');
 
-// Función principal para obtener y mostrar los "matches"
 async function fetchMatches() {
     try {
         const response = await fetch(`/api/usermatch/mutual/${loggedInUserId}`);
@@ -182,8 +175,23 @@ async function fetchMatches() {
 
                 matchListElement.appendChild(userCard);
 
-                userCard.querySelector('.call-btn').addEventListener('click', () => {
-                    startVideoCall(match.user2.userId);
+                userCard.querySelector('.call-btn').addEventListener('click', async () => {
+                    try {
+                        const matchId = match.userMatchId;
+                        const videoCallResponse = await fetch(`/api/videollamada/createWithMatch?matchId=${matchId}`, {
+                            method: 'POST',
+                        });
+                        if (videoCallResponse.ok) {
+                            const videoCallData = await videoCallResponse.json();
+                            alert(`Videollamada creada exitosamente con ID: ${videoCallData.id}`);
+                            window.location.href = `videollamada.html?matchId=${matchId}`;
+                        } else {
+                            alert("Hubo un error al crear la videollamada.");
+                        }
+                    } catch (error) {
+                        console.error("Error al crear videollamada:", error);
+                        alert("Ocurrió un error al intentar crear la videollamada.");
+                    }
                 });
             }
         } else {
@@ -196,7 +204,6 @@ async function fetchMatches() {
     }
 }
 
-// Función para obtener los detalles del usuario
 async function fetchUserDetails(userId) {
     try {
         const response = await fetch(`/api/usuario/${userId}`);
@@ -207,21 +214,14 @@ async function fetchUserDetails(userId) {
     }
 }
 
-// Función para redirigir a la página de videollamada
-function startVideoCall(userId) {
-    console.log(`Iniciando videollamada con el usuario ${userId}`);
-    window.location.href = `videollamada.html?userId=${userId}`;
-}
-
-// Llama a la función para cargar los matches
 fetchMatches();
-
 
 document.addEventListener('DOMContentLoaded', fetchUsers);
 
+//Aceptar Usuarios
+
 function acceptUser(likedUsuarioId) {
-    const usuarioId = Number(localStorage.getItem('userId')); // Obtener el ID del usuario logueado desde localStorage
-    console.log('usuarioId:', usuarioId);
+    console.log('usuarioId:', loggedInUserId);
 
     if (likedUsuarioId && usuarioId) { 
         fetch(`/api/usermatch/accept/${likedUsuarioId}?usuarioId=${usuarioId}`, {
@@ -242,45 +242,42 @@ function acceptUser(likedUsuarioId) {
     }
 }
 
-// Cuando se hace click en "Rechazar"
+//Rechazar Usuarios
+
 function rejectUser(likedUsuarioId) {
     fetch(`/api/usermatch/reject/${likedUsuarioId}`, {
         method: 'POST',
     })
     .then(response => response.text())
     .then(data => {
-        // Maneja la respuesta, por ejemplo, mostrar el siguiente usuario
         console.log(data);
     })
     .catch(error => console.error("Error:", error));
 }
 
+//Mostrar perfil
+
 document.addEventListener('DOMContentLoaded', initializePage);
 
 async function initializePage() {
-    const userId = localStorage.getItem('userId'); // Obtener el ID del usuario desde el localStorage
+    const userId = localStorage.getItem('userId');
     if (userId) {
         try {
-            // Obtener datos del usuario de la API
             const response = await fetch(`/api/usuario/${userId}`);
             const userData = await response.json();
 
-            console.log(userData); // Verifica qué contiene userData
-
-            // Saludo personalizado y detalles del usuario
+            console.log(userData);
             document.getElementById('userName').textContent = userData.nombre;
             document.getElementById('userFullName').textContent = userData.nombre;
 
-            // Mostrar el plan del usuario
             if (userData.plan) {
                 document.getElementById('userPlan').textContent = userData.plan;
             } else {
                 document.getElementById('userPlan').textContent = 'Sin plan asignado';
             }
 
-            // Lista de intereses
             const interestsList = document.getElementById('userInterests');
-            interestsList.innerHTML = ''; // Limpiar la lista antes de agregar los nuevos intereses
+            interestsList.innerHTML = '';
 
             if (userData.intereses && Array.isArray(userData.intereses)) {
                 const interestsHtml = userData.intereses.map(interes => `<li>${interes}</li>`).join('');
@@ -289,7 +286,6 @@ async function initializePage() {
                 interestsList.innerHTML = '<li>No tiene intereses registrados.</li>';
             }
 
-            // Cargar notificaciones al inicializar la página
             await loadUserNotifications(userId);
 
         } catch (error) {
@@ -298,21 +294,21 @@ async function initializePage() {
     }
 }
 
+//Cargar Notificaciones
+
 async function loadUserNotifications() {
     try {
         const userId = localStorage.getItem("userId");
-        // Hacer un request a la API para obtener las notificaciones del usuario logueado
         const response = await fetch(`/api/notificacion/usuario/${userId}`);
         if (!response.ok) throw new Error('Error al obtener las notificaciones.');
 
         const notifications = await response.json();
-        console.log(notifications); // Verificar qué notificaciones llegan desde la API
+        console.log(notifications);
 
         const notificationsData = document.getElementById('notificationsData');
-        notificationsData.innerHTML = ''; // Limpiar las notificaciones previas
+        notificationsData.innerHTML = '';
 
         if (notifications.length > 0) {
-            // Renderizar las notificaciones como una lista
             notifications.forEach(notification => {
                 const notificationItem = document.createElement('div');
                 notificationItem.className = 'notification-item';
@@ -330,6 +326,8 @@ async function loadUserNotifications() {
         console.error('Error al cargar las notificaciones:', error);
     }
 }
+
+//Cambiar Plan
 
 document.addEventListener("DOMContentLoaded", () => {
     const updatePlanBtn = document.getElementById("updatePlanBtn");
@@ -362,7 +360,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 const updatedUser = await response.json();
                 console.log("Usuario actualizado:", updatedUser);
 
-                // Actualizar la interfaz con el nuevo plan
                 document.getElementById("userPlan").innerText = updatedUser.plan.nombre;
                 alert("Plan actualizado con éxito.");
             } else {
@@ -374,10 +371,10 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Hubo un problema al procesar la solicitud. Por favor, inténtalo nuevamente.");
         }
     }
-
-    // Asignar evento al botón de actualizar
     updatePlanBtn.addEventListener("click", updatePlan);
 });
+
+//Añadir Interes
 
 document.getElementById("addInterest").addEventListener("click", async () => {
     const newInterestInput = document.getElementById("newInterest");
@@ -389,13 +386,11 @@ document.getElementById("addInterest").addEventListener("click", async () => {
     }
 
     const usuarioId = localStorage.getItem("userId"); 
-    // Cuerpo del interés a enviar al backend
     const interestData = {
         nombre: newInterestName,
     };
 
     try {
-        // Crear el interés y vincularlo al usuario
         const response = await fetch(`/api/usuario/addInteres?usuarioId=${usuarioId}`, {
             method: "POST",
             headers: {

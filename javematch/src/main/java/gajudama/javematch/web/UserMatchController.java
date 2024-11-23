@@ -5,14 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import gajudama.javematch.logic.NotificacionLogic;
 import gajudama.javematch.logic.UserMatchLogic;
 import gajudama.javematch.logic.UsuarioLogic;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Usuario;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usermatch")
@@ -32,18 +30,6 @@ public class UserMatchController {
     public ResponseEntity<UserMatch> updateMatch(@PathVariable Long id, @RequestBody UserMatch matchDetails) {
         UserMatch updatedMatch = userMatchLogic.updateMatch(id, matchDetails);
         return new ResponseEntity<>(updatedMatch, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteMatch(@PathVariable Long id) {
-        userMatchLogic.deleteMatch(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<UserMatch>> getAllMatches() {
-        List<UserMatch> matches = userMatchLogic.getAllMatches();
-        return new ResponseEntity<>(matches, HttpStatus.OK);
     }
 
     // Endpoint específico para crear un match entre dos usuarios

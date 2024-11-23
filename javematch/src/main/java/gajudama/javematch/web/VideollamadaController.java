@@ -11,7 +11,10 @@ import gajudama.javematch.model.Videollamada;
 import gajudama.javematch.model.Juego;
 import gajudama.javematch.model.UserMatch;
 
+import java.time.LocalDateTime;
+
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/videollamada")
@@ -35,6 +38,8 @@ public class VideollamadaController {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    
+
     @PutMapping("/{id}")
     public ResponseEntity<Videollamada> updateVideollamada(@PathVariable Long id, @RequestBody Videollamada videollamadaDetails) {
         Videollamada updatedVideollamada = videollamadaLogic.updateVideollamada(id, videollamadaDetails);
@@ -53,15 +58,36 @@ public class VideollamadaController {
         return new ResponseEntity<>(videollamadas, HttpStatus.OK);
     }
 
-    // Endpoint específico para crear una videollamada con un match
-    @PostMapping("/createWithMatch")
-    public ResponseEntity<Videollamada> createVideollamadaWithMatch(@RequestParam Long matchId) {
-        UserMatch match = userMatchLogic.getMatchById(matchId)
-            .orElseThrow(() -> new RuntimeException("Match not found"));
-        Videollamada videollamada = videollamadaLogic.createVideollamada(match);
-        return new ResponseEntity<>(videollamada, HttpStatus.CREATED);
-    }
+ 
 
+    @PostMapping("/createWithMatch")
+    public ResponseEntity<?> createVideollamadaWithMatch(@RequestParam Long matchId) {
+        try {
+            // Obtener el match por ID
+            UserMatch match = userMatchLogic.getMatchById(matchId)
+                .orElseThrow(() -> new RuntimeException("Match no encontrado"));
+        
+            // Crear la videollamada
+            Videollamada videollamada = new Videollamada();
+            videollamada.setFechaVideollamada(LocalDateTime.now());
+            videollamada.setEstado("Iniciada");
+            Videollamada createdVideollamada = videollamadaLogic.createVideollamada(videollamada);
+        
+            // Establecer el ID de la videollamada en el match
+            match.setVideollamada_Match(createdVideollamada);
+            userMatchLogic.updateMatch(matchId, match);
+        
+            // Crear un objeto de respuesta con los detalles
+            return ResponseEntity.ok(Map.of(
+                "videollamada", createdVideollamada,
+                "user1", match.getUser1(),
+                "user2", match.getUser2()
+            ));
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     // Endpoint específico para agregar un juego a una videollamada
     @PostMapping("/{videollamadaId}/addJuego")
     public ResponseEntity<Videollamada> addJuegoToVideollamada(@PathVariable Long videollamadaId, @RequestBody Juego juego) {

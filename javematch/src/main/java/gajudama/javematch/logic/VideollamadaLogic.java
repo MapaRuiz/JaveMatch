@@ -1,8 +1,8 @@
 package gajudama.javematch.logic;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,6 @@ public class VideollamadaLogic {
         return videollamadaRepository.findById(id).map(videollamada -> {
             videollamada.setFechaVideollamada(videollamadaDetails.getFechaVideollamada());
             videollamada.setEstado(videollamadaDetails.getEstado());
-            videollamada.setDuracion(videollamadaDetails.getDuracion());
             videollamada.setJuegos(videollamadaDetails.getJuegos());
             return videollamadaRepository.save(videollamada);
         }).orElseThrow(() -> new RuntimeException("Videollamada not found"));
@@ -51,12 +50,9 @@ public class VideollamadaLogic {
     @Transactional
     public Videollamada createVideollamada(UserMatch match) {
         Videollamada videollamada = new Videollamada();
-        videollamada.setFechaVideollamada(new Date());
-        videollamada.setEstado("pending"); // Estado inicial
-        videollamada.setDuracion(0); // Duración inicial
-        List<UserMatch> list = new ArrayList<>();
-        list.add(match);
-        videollamada.setMatches(list);
+    videollamada.setFechaVideollamada(LocalDateTime.now());
+        videollamada.setEstado("pending"); // Estado inicial      
+        videollamada.setMatch(match);
         videollamada.setJuegos(new ArrayList<>());
 
         return videollamadaRepository.save(videollamada);

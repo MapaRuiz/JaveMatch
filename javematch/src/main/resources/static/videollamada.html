@@ -3,42 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matches</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Asegúrate de enlazar tu CSS aquí -->
+    <title>Videollamada</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Encabezado -->
     <header>
         <nav>
             <ul>
-                <a href="index.html">Inicio</a>
-                <a href="match.html">Conoce gente</a>
-                <a href="tusMatches.html">Tus Matches</a>
-                <a href="videollamada.html">Videollamada</a>
-                <a href="perfil.html">Perfil</a>
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="match.html">Conoce gente</a></li>
+                <li><a href="tusMatches.html">Tus Matches</a></li>
+                <li><a href="videollamada.html">Videollamada</a></li>
+                <li><a href="perfil.html">Perfil</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Contenido principal -->
     <main>
-        <h1>Tus Matches</h1>
-        <p class="subtext">Explora las personas con las que has coincidido.</p>
+        <h1>Videollamada en Curso</h1>
+        <div id="videollamada-info">
+            <p><strong>Fecha:</strong> <span id="fecha-llamada"></span></p>
+            <p><strong>Estado:</strong> <span id="estado-llamada"></span></p>
+        </div>
 
-        <!-- Lista de tarjetas de usuario -->
-        <div id="user-list-match">
-            <!-- Las tarjetas de usuario se generarán dinámicamente con JavaScript -->
+        <p class="subtext">Usuarios en esta videollamada:</p>
+        <div id="user-list-videollamada">
+            <!-- Aquí se mostrarán los usuarios de la videollamada -->
         </div>
     </main>
 
-    <!-- Pie de página -->
     <footer>
         <p>&copy; 2024 - JaveMatch</p>
     </footer>
 
-    <!-- Script -->
-    <script>
-        // Aquí irá tu código JavaScript para generar dinámicamente las tarjetas
-    </script>
+    <script src="scripts.js"></script>
 </body>
 </html>

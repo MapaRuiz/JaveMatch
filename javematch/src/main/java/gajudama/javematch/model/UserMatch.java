@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
@@ -30,6 +31,8 @@ public class UserMatch {
     @Temporal(TemporalType.DATE)
     private Date fechaMatch;  // Match date
 
-    @ManyToOne
-    private Videollamada videollamada_Match;  //Videollamada associated with the match
+    @OneToOne
+    @JoinColumn(name = "videollamada_id", referencedColumnName = "Videollamada_id")
+    private Videollamada videollamada_Match;  // Videollamada associated with the match
+   
 }
