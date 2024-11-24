@@ -459,57 +459,71 @@ document.addEventListener("DOMContentLoaded", function () {
    
 });
 
-
-document.addEventListener("DOMContentLoaded", function() {
-    console.log("DOM completamente cargado");
-   
-
-async function MostrarVideollamada() {
-    const matchId = 1; // Cambiar si es dinámico, puede ser obtenido de la URL o localStorage
+  /* const matchId = 1; // Cambiar si es dinámico, puede ser obtenido de la URL o localStorage
 
     if (!matchId) {
         alert("No se ha encontrado el matchId.");
         return;
-    }
-
-    try {
-        const response = await fetch(`/api/videollamada/match/${matchId}`);
-        const videollamadaData = await response.json();
-
-        if (response.ok) {
-            console.log("Datos de videollamada:", videollamadaData);
-
-            // Actualiza la fecha y el estado de la videollamada
-            document.getElementById('fecha-llamada').textContent = new Date(videollamadaData.fechaVideollamada).toLocaleString();
-            document.getElementById('estado-llamada').textContent = videollamadaData.estado;
-
-            // Manejo de los usuarios del match
-            const user1Details = videollamadaData.match.user1;
-            const user2Details = videollamadaData.match.user2;
-
-            const userListDiv = document.getElementById('user-list-videollamada');
-            userListDiv.innerHTML = ''; // Limpia la lista antes de llenarla
-
-            // Mostrar los detalles de los dos usuarios
-            if (user1Details && user2Details) {
-                userListDiv.innerHTML = `
-                    <p><strong>${user1Details.nombre}</strong> (Usuario 1)</p>
-                    <p><strong>${user2Details.nombre}</strong> (Usuario 2)</p>
-                `;
-            } else {
-                // Si no se encuentran detalles, mostrar el ID de los usuarios
-                userListDiv.innerHTML = `
-                    <p><strong>Usuario 1 ID:</strong> ${user1Details.userId}</p>
-                    <p><strong>Usuario 2 ID:</strong> ${user2Details}</p>
-                `;
+    }*/
+        async function getUserDetails(userId) {
+            try {
+                const response = await fetch(`/api/usuario/${userId}`); // Cambia el endpoint según tu API
+                if (response.ok) {
+                    return await response.json();
+                } else {
+                    console.error(`Error al obtener detalles del usuario ${userId}: ${response.status}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error en la solicitud del usuario:", error);
+                return null;
             }
-        } else {
-            alert("Error al obtener la videollamada: " + response.status);
         }
-    } catch (error) {
-        console.error("Error al cargar la videollamada:", error);
-        alert("Ocurrió un error al cargar la videollamada.");
-    }
-}
+        
+        async function MostrarVideollamada() {
+            try {
+                const response = await fetch(`/api/videollamada/match/${1}`);
+                const videollamadaData = await response.json();
+        
+                if (response.ok) {
+                    console.log("Datos de videollamada:", videollamadaData);
+        
+                    // Actualiza la fecha y el estado de la videollamada
+                    document.getElementById('fecha-llamada').textContent = new Date(videollamadaData.fechaVideollamada).toLocaleString();
+                    document.getElementById('estado-llamada').textContent = videollamadaData.estado;
+        
+                    // Manejo de los usuarios del match
+                    const user1Details = videollamadaData.match.user1;
+                    const user2Id = videollamadaData.match.user2;
+        
+                    const userListDiv = document.getElementById('user-list-videollamada');
+                    userListDiv.innerHTML = ''; // Limpia la lista antes de llenarla
+        
+                    // Mostrar los detalles del usuario 1
+                    userListDiv.innerHTML += `
+                        <p><strong>Usuario 1:</strong> ${user1Details.nombre || "ID: " + user1Details.userId}</p>
+                    `;
+        
+                    // Obtener y mostrar los detalles del usuario 2
+                    const user2Details = await getUserDetails(user2Id);
+                    if (user2Details) {
+                        userListDiv.innerHTML += `
+                            <p><strong>Usuario 2:</strong> ${user2Details.nombre || "ID: " + user2Details.userId}</p>
+                        `;
+                    } else {
+                        userListDiv.innerHTML += `
+                            <p><strong>Usuario 2:</strong> ID: ${user2Id}</p>
+                        `;
+                    }
+                } else {
+                    alert("Error al obtener la videollamada: " + response.status);
+                }
+            } catch (error) {
+                console.error("Error al cargar la videollamada:", error);
+                alert("Ocurrió un error al cargar la videollamada.");
+            }
+        }
+        
+        // Llamada a la función para mostrar los datos
+        MostrarVideollamada();
 
-});

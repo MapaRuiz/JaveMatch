@@ -42,4 +42,19 @@ public class Videollamada {
      @JsonManagedReference 
     @JoinColumn(name = "user_match_id") 
     private UserMatch match;  // Match linked to this Videollamada
+
+public String toString() {
+    return "Videollamada{" +
+            "Videollamada_id=" + Videollamada_id +
+            ", fechaVideollamada=" + fechaVideollamada +
+            ", estado='" + estado + '\'' +
+            ", juegos=" + (juegos != null ? juegos.stream().map(Juego::getNombre).toList() : "null") +
+            ", match=" + (match != null ? "UserMatch{id=" + match.getUserMatchId() + "}" : "null") +
+            '}';
 }
+
+
+}
+
+
+

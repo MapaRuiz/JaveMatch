@@ -114,16 +114,24 @@ public ResponseEntity<Map<String, Long>> createVideollamada(@RequestParam Long m
 
    @GetMapping("/match/{matchId}")
 public ResponseEntity<?> getVideollamadaByMatchId(@PathVariable Long matchId) {
-    Videollamada videollamada = videollamadaLogic.getVideollamadaByMatchId(matchId);
+  Videollamada videollamada = videollamadaLogic.getVideollamadaByMatchId(matchId);
 
     if (videollamada != null) {
         // Asegúrate de cargar los datos completos de user2 si solo está el ID
-        if (videollamada.getMatch().getUser2().getUserId() instanceof Long) {
-           Usuario user2 = userLogic.getUsuarioporID((Long) videollamada.getMatch().getUser2().getUserId());
-            videollamada.getMatch().setUser2(user2);
+        if (videollamada.getMatch().getUser2() != null && 
+            videollamada.getMatch().getUser2().getUserId() instanceof Long) {
+            Usuario user2 = userLogic.getUsuarioporID(videollamada.getMatch().getUser2().getUserId());
+            if (user2 != null) {
+                videollamada.getMatch().setUser2(user2);
+            }
         }
+
+        // Depuración: verifica los datos cargados
+        System.out.println("Videollamada retornada: " + videollamada);
+
         return ResponseEntity.ok(videollamada);
     }
+
     return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 }
 }
