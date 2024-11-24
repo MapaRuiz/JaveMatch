@@ -18,5 +18,6 @@ public class Juego {
     private String nombre;
 
     @ManyToMany(mappedBy = "juegos")
+    
     private List<Videollamada> videollamadas;
 }

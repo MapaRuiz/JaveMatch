@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.VideollamadaRepository;
-import gajudama.javematch.accesoDatos.UsuarioRepository;
 import gajudama.javematch.accesoDatos.UserMatchRepository;
 import gajudama.javematch.model.Juego;
 import gajudama.javematch.model.UserMatch;
@@ -20,7 +19,6 @@ import jakarta.transaction.Transactional;
 public class VideollamadaLogic {
     @Autowired
     private VideollamadaRepository videollamadaRepository;
-    private UsuarioRepository userRepository;
      @Autowired
     private UserMatchRepository userMatchRepository;
 
@@ -33,8 +31,6 @@ public class VideollamadaLogic {
         return videollamadaRepository.findById(id);
     }
 
-   
-
     // Método que obtiene la videollamada asociada a un match
     public Videollamada  getVideollamadaByMatchId(Long matchId) {
         Optional <Videollamada> videoOptional = videollamadaRepository.findByMatch_UserMatchId(matchId);
@@ -43,14 +39,22 @@ public class VideollamadaLogic {
     }
 
     @Transactional
-    public Videollamada updateVideollamada(Long id, Videollamada videollamadaDetails) {
-        return videollamadaRepository.findById(id).map(videollamada -> {
-            videollamada.setFechaVideollamada(videollamadaDetails.getFechaVideollamada());
-            videollamada.setEstado(videollamadaDetails.getEstado());
-            videollamada.setJuegos(videollamadaDetails.getJuegos());
-            return videollamadaRepository.save(videollamada);
-        }).orElseThrow(() -> new RuntimeException("Videollamada not found"));
-    }
+    public Videollamada updateVideollamada(Long id, Videollamada updatedDetails) {
+    return videollamadaRepository.findById(id).map(existingVideollamada -> {
+        // Update the relevant fields from `updatedDetails` to `existingVideollamada`
+        if (updatedDetails.getFechaVideollamada() != null) {
+            existingVideollamada.setFechaVideollamada(updatedDetails.getFechaVideollamada());
+        }
+        if (updatedDetails.getEstado() != null) {
+            existingVideollamada.setEstado(updatedDetails.getEstado());
+        }
+        if (updatedDetails.getJuegos() != null && !updatedDetails.getJuegos().isEmpty()) {
+            existingVideollamada.setJuegos(updatedDetails.getJuegos());
+        }
+        // Persist the changes
+        return videollamadaRepository.save(existingVideollamada);
+    }).orElseThrow(() -> new RuntimeException("Videollamada not found with id: " + id));
+}
 
     @Transactional
     public void deleteVideollamada(Long id) {
@@ -60,17 +64,6 @@ public class VideollamadaLogic {
     public List<Videollamada> getAllVideollamadas() {
         return videollamadaRepository.findAll();
     }
-
-    /*@Transactional
-    public Videollamada createVideollamada(UserMatch match) {
-        Videollamada videollamada = new Videollamada();
-    videollamada.setFechaVideollamada(LocalDateTime.now());
-        videollamada.setEstado("pending"); // Estado inicial      
-        videollamada.setMatch(match);
-        videollamada.setJuegos(new ArrayList<>());
-
-        return videollamadaRepository.save(videollamada);
-    }*/
 
    @Transactional
 public Videollamada createVideollamada(Long matchId) {

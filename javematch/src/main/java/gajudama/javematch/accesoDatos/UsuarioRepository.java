@@ -12,7 +12,6 @@ import gajudama.javematch.model.Usuario;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByCorreo(String correo);
-    @SuppressWarnings("null")
     Optional<Usuario> findById (Long id);
    
 

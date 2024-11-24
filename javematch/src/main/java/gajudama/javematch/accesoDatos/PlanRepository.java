@@ -9,6 +9,5 @@ import gajudama.javematch.model.Plan;
 
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Long> {
-    @SuppressWarnings("null")
     Optional<Plan> findById(Long id); 
 }

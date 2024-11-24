@@ -24,6 +24,10 @@ public class JuegoLogic {
     public Optional<Juego> getJuegosById(Long id) {
         return juegoRepository.findById(id);
     }
+    
+    public Optional<Juego> findByNombre(String nombre) {
+        return juegoRepository.findByNombre(nombre);
+    }
 
     @Transactional
     public Juego updateJuegos(Long id, Juego juegoDetails) {

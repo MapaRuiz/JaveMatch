@@ -31,7 +31,6 @@ class UserMatchControllerTest {
         MockitoAnnotations.openMocks(this);  // Esto inicializa los mocks
     }
 
-    @SuppressWarnings("null")
     @Test
     void testCreateMatch() {
         Long usuarioId = 1L;
@@ -62,7 +61,6 @@ class UserMatchControllerTest {
         assertEquals(likedUsuarioId, response.getBody().getUser2().getUserId());
     }
 
-    @SuppressWarnings("null")
     @Test
     void testGetMatchById() {
         Long matchId = 1L;
@@ -107,7 +105,6 @@ class UserMatchControllerTest {
        // assertNotNull(response.getBody());
     }
 
-    @SuppressWarnings("null")
     @Test
     void testUpdateMatch() {
         Long matchId = 1L;

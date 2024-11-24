@@ -1,7 +1,10 @@
 package gajudama.javematch.model;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,7 +16,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.JoinColumn;
 import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Data
@@ -28,14 +30,14 @@ public class Videollamada {
 
     private String estado;
 
-    @ManyToMany
-    
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "videollamada_juego",
-        joinColumns = @JoinColumn(name = "Videollamada_id"),
-        inverseJoinColumns = @JoinColumn(name = "Juego_id")
+        joinColumns = @JoinColumn(name = "videollamada_id"),
+        inverseJoinColumns = @JoinColumn(name = "juego_id")
     )
-    private List<Juego> juegos;
+    
+    private List<Juego> juegos = new ArrayList<>();
 
 
     @OneToOne
@@ -52,7 +54,6 @@ public String toString() {
             ", match=" + (match != null ? "UserMatch{id=" + match.getUserMatchId() + "}" : "null") +
             '}';
 }
-
 
 }
 

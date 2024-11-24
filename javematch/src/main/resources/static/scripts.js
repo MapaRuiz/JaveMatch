@@ -58,10 +58,8 @@ async function loginUsuario(email) {
 
         if (response.ok) {
             const usuario = await response.json();
-            alert('Login exitoso');
             localStorage.setItem('userId', usuario.userId);
             localStorage.setItem('userName', usuario.nombre);
-            alert('Login exitoso');
             window.location.href = 'match.html';
             return usuario;
         } else {
@@ -231,6 +229,7 @@ async function fetchMatches() {
                             const videoCallData = await videoCallResponse.json();
                             if (videoCallData.id) { // Verifica que el ID exista
                                 alert(`Videollamada creada exitosamente con ID: ${videoCallData.id}`);
+                                localStorage.setItem('currentVideollamadaId', videoCallData.id); // Save video call ID
                                 localStorage.setItem('matchId', matchId); // Guarda el ID del match
                                 window.location.href = `videollamada.html`;
                             } else {
@@ -267,12 +266,6 @@ async function fetchUserDetails(userId) {
 }
 
 fetchMatches();
-
-// Función para redirigir a la página de videollamada
-function startVideoCall(userId) {
-    console.log(`Iniciando videollamada con el usuario ${userId}`);
-    window.location.href = `videollamada.html?userId=${userId}`;
-}
 
 // Llama a la función para cargar los matches
 document.addEventListener('DOMContentLoaded', initializePage);
@@ -459,71 +452,134 @@ document.addEventListener("DOMContentLoaded", function () {
    
 });
 
-  /* const matchId = 1; // Cambiar si es dinámico, puede ser obtenido de la URL o localStorage
+async function getUserDetails(userId) {
+    try {
+        const response = await fetch(`/api/usuario/${userId}`); // Cambia el endpoint según tu API
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error(`Error al obtener detalles del usuario ${userId}: ${response.status}`);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error en la solicitud del usuario:", error);
+        return null;
+    }
+}
 
-    if (!matchId) {
-        alert("No se ha encontrado el matchId.");
+async function MostrarVideollamada() {
+    try {
+        const matchId = localStorage.getItem('matchId');
+        if (!matchId) {
+            alert("No se encontró un match asociado. Por favor, selecciona uno primero.");
+            return;
+        }
+
+        // Fetch the UserMatch details directly
+        const matchResponse = await fetch(`/api/usermatch/${matchId}`);
+        if (!matchResponse.ok) {
+            alert("Error al obtener los detalles del match: " + matchResponse.status);
+            return;
+        }
+        const matchData = await matchResponse.json();
+
+        // Fetch the Videollamada details (if needed for other info like games)
+        const videollamadaResponse = await fetch(`/api/videollamada/match/${matchId}`);
+        const videollamadaData = await videollamadaResponse.json();
+
+        if (videollamadaResponse.ok) {
+            console.log("Datos de videollamada:", videollamadaData);
+        }
+
+        // Update the Videollamada UI
+        if (videollamadaResponse.ok && videollamadaData) {
+            document.getElementById('fecha-llamada').textContent = new Date(videollamadaData.fechaVideollamada).toLocaleString();
+            document.getElementById('estado-llamada').textContent = videollamadaData.estado;
+
+            // Display games associated with the videollamada
+            const gamesListDiv = document.getElementById('games-list');
+            if (gamesListDiv) {
+                gamesListDiv.innerHTML = ''; // Clear existing games
+                videollamadaData.juegos.forEach(juego => {
+                    console.log("Adding game:", juego.nombre); // Debugging
+                    const gameElement = document.createElement('p');
+                    gameElement.textContent = juego.nombre;
+                    gamesListDiv.appendChild(gameElement);
+                });
+            }
+        }
+
+        const userListDiv = document.getElementById('user-list-videollamada');
+        userListDiv.innerHTML = '';
+
+        // Display user1 details
+        userListDiv.innerHTML += `<p><strong>Usuario 1:</strong> ${matchData.user1.nombre || "ID: " + matchData.user1.userId}</p>`;
+
+        // Fetch user2 details using the ID if user2 is an ID and not a full object
+        if (typeof matchData.user2 === "number") {
+            const user2Response = await fetch(`/api/usuario/${matchData.user2}`);
+            const user2Details = user2Response.ok ? await user2Response.json() : { nombre: "Usuario no encontrado" };
+            userListDiv.innerHTML += `<p><strong>Usuario 2:</strong> ${user2Details.nombre || "ID: " + matchData.user2}</p>`;
+        } else {
+            // If user2 is already an object with a "nombre" property
+            userListDiv.innerHTML += `<p><strong>Usuario 2:</strong> ${matchData.user2.nombre || "ID: " + matchData.user2.userId}</p>`;
+        }
+    } catch (error) {
+        console.error("Error al cargar la videollamada:", error);
+        alert("Ocurrió un error al cargar la videollamada.");
+    }
+}
+
+// Call this function when on the correct page
+if (window.location.pathname.includes("videollamada.html")) {
+    MostrarVideollamada();
+}
+
+
+// Function to add a game to a videollamada
+document.getElementById("addGame")?.addEventListener("click", async () => {
+    const gameName = document.getElementById("gameName").value.trim();
+    const videoCallId = localStorage.getItem("currentVideollamadaId");
+
+    if (!gameName) {
+        alert("Por favor, introduce un nombre válido para el juego.");
         return;
-    }*/
-        async function getUserDetails(userId) {
-            try {
-                const response = await fetch(`/api/usuario/${userId}`); // Cambia el endpoint según tu API
-                if (response.ok) {
-                    return await response.json();
-                } else {
-                    console.error(`Error al obtener detalles del usuario ${userId}: ${response.status}`);
-                    return null;
-                }
-            } catch (error) {
-                console.error("Error en la solicitud del usuario:", error);
-                return null;
-            }
+    }
+
+    if (!videoCallId) {
+        alert("No se encontró una videollamada activa. Por favor, crea una antes de añadir juegos.");
+        return;
+    }
+
+    videoCallIdAsNumber = parseInt(videoCallId, 10); // Convierte a número
+    try {
+        // API call to add game to the videollamada
+        const response = await fetch(`/api/videollamada/${videoCallIdAsNumber}/addJuego`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ nombre: gameName }),
+        });
+
+        if (response.ok) {
+            const updatedVideollamada = await response.json();
+            alert(`El juego "${gameName}" ha sido añadido exitosamente.`);
+            console.log("Videollamada actualizada:", updatedVideollamada);
+
+            // Clear the input field
+            document.getElementById("gameName").value = "";
+
+            // Call MostrarVideollamada to refresh the displayed info
+            await MostrarVideollamada();
+        } else {
+            console.error("Error al añadir el juego:", await response.text());
+            alert("Hubo un problema al añadir el juego. Intenta nuevamente.");
         }
-        
-        async function MostrarVideollamada() {
-            try {
-                const response = await fetch(`/api/videollamada/match/${1}`);
-                const videollamadaData = await response.json();
-        
-                if (response.ok) {
-                    console.log("Datos de videollamada:", videollamadaData);
-        
-                    // Actualiza la fecha y el estado de la videollamada
-                    document.getElementById('fecha-llamada').textContent = new Date(videollamadaData.fechaVideollamada).toLocaleString();
-                    document.getElementById('estado-llamada').textContent = videollamadaData.estado;
-        
-                    // Manejo de los usuarios del match
-                    const user1Details = videollamadaData.match.user1;
-                    const user2Id = videollamadaData.match.user2;
-        
-                    const userListDiv = document.getElementById('user-list-videollamada');
-                    userListDiv.innerHTML = ''; // Limpia la lista antes de llenarla
-        
-                    // Mostrar los detalles del usuario 1
-                    userListDiv.innerHTML += `
-                        <p><strong>Usuario 1:</strong> ${user1Details.nombre || "ID: " + user1Details.userId}</p>
-                    `;
-        
-                    // Obtener y mostrar los detalles del usuario 2
-                    const user2Details = await getUserDetails(user2Id);
-                    if (user2Details) {
-                        userListDiv.innerHTML += `
-                            <p><strong>Usuario 2:</strong> ${user2Details.nombre || "ID: " + user2Details.userId}</p>
-                        `;
-                    } else {
-                        userListDiv.innerHTML += `
-                            <p><strong>Usuario 2:</strong> ID: ${user2Id}</p>
-                        `;
-                    }
-                } else {
-                    alert("Error al obtener la videollamada: " + response.status);
-                }
-            } catch (error) {
-                console.error("Error al cargar la videollamada:", error);
-                alert("Ocurrió un error al cargar la videollamada.");
-            }
-        }
-        
-        // Llamada a la función para mostrar los datos
-        MostrarVideollamada();
+    } catch (error) {
+        console.error("Error al añadir el juego:", error);
+        alert("Ocurrió un error al intentar añadir el juego.");
+    }
+});
+
 

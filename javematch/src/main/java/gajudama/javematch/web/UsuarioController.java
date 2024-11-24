@@ -28,6 +28,7 @@ public class UsuarioController {
         List<Map<String, Object>> usuariosDTO = new ArrayList<>();
 
         for (Usuario usuario : usuarios) {
+            
             Map<String, Object> usuarioData = new HashMap<>();
             usuarioData.put("userId", usuario.getUserId());
             usuarioData.put("nombre", usuario.getNombre());

@@ -41,13 +41,6 @@ public class Usuario {
     @OneToMany(mappedBy = "user2")
     private List<UserMatch> matchesAsUser2;
 
-    // Reports as author and as reported user
-    @OneToMany(mappedBy = "autor")
-    private List<Reporte> reportsAuthored;
-
-    @OneToMany(mappedBy = "reportado")
-    private List<Reporte> reportsReceived;
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "usuario_interes",
