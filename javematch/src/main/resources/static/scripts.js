@@ -192,38 +192,50 @@ function showUser(index) {
 
 async function fetchMatches() {
     try {
+        // Llamada al backend para obtener los matches mutuos del usuario logueado
         const response = await fetch(`/api/usermatch/mutual/${loggedInUserId}`);
         const matches = await response.json();
         console.log("Matches fetched:", matches);
 
+        // Referencia al contenedor donde se mostrarán los matches
         const matchListElement = document.getElementById('user-list-match');
-        matchListElement.innerHTML = '';
+        matchListElement.innerHTML = ''; // Limpia la lista antes de llenarla
 
+        // Verifica si hay matches disponibles
         if (matches.length > 0) {
             for (const match of matches) {
-                const user2Details = await fetchUserDetails(match.user2);
+                // Determinar quién es el otro usuario en el match
+                const otherUserId = match.user1.userId === loggedInUserId ? match.user2.userId : match.user1.userId;
+                const otherUserDetails = await fetchUserDetails(otherUserId); // Llama a la función para obtener los detalles del usuario
 
+                // Crear el elemento para el usuario
                 const userCard = document.createElement('div');
                 userCard.classList.add('user-card');
                 userCard.innerHTML = `
-                    <h2>${user2Details.nombre || 'Nombre no disponible'}</h2>
-                    <p>Intereses: ${user2Details.intereses.join(', ') || 'No tiene intereses disponibles'}</p>
+                    <h2>${otherUserDetails.nombre || 'Nombre no disponible'}</h2>
+                    <p>Intereses: ${otherUserDetails.intereses.join(', ') || 'No tiene intereses disponibles'}</p>
                     <button class="call-btn">Iniciar videollamada</button>
                 `;
 
+                // Añadir la tarjeta del usuario al contenedor
                 matchListElement.appendChild(userCard);
 
                 userCard.querySelector('.call-btn').addEventListener('click', async () => {
                     try {
-                        const matchId = match.userMatchId;
+                        const matchId = match.userMatchId; // Obtiene el ID del match
                         const videoCallResponse = await fetch(`/api/videollamada/createWithMatch?matchId=${matchId}`, {
                             method: 'POST',
                         });
+                
                         if (videoCallResponse.ok) {
                             const videoCallData = await videoCallResponse.json();
-                            alert(`Videollamada creada exitosamente con ID: ${videoCallData.id}`);
-                            localStorage.setItem('matchId', matchId);
-                            window.location.href = `videollamada.html`;
+                            if (videoCallData.id) { // Verifica que el ID exista
+                                alert(`Videollamada creada exitosamente con ID: ${videoCallData.id}`);
+                                localStorage.setItem('matchId', matchId); // Guarda el ID del match
+                                window.location.href = `videollamada.html`;
+                            } else {
+                                alert("No se pudo obtener el ID de la videollamada.");
+                            }
                         } else {
                             alert("Hubo un error al crear la videollamada.");
                         }
@@ -234,6 +246,7 @@ async function fetchMatches() {
                 });
             }
         } else {
+            // Si no hay matches, mostrar un mensaje
             matchListElement.innerHTML = '<p>No hay coincidencias disponibles.</p>';
         }
     } catch (error) {
@@ -381,49 +394,78 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //Añadir Interes
 
-document.getElementById("addInterest").addEventListener("click", async () => {
-    const newInterestInput = document.getElementById("newInterest");
-    const newInterestName = newInterestInput.value.trim();
+document.addEventListener("DOMContentLoaded", function () {
+    // Verifica que el elemento con ID 'addInterest' exista antes de agregar el eventListener
+    const addInterestButton = document.getElementById("addInterest");
+    if (addInterestButton) {
+        addInterestButton.addEventListener("click", async () => {
+            const newInterestInput = document.getElementById("newInterest");
+            const newInterestName = newInterestInput.value.trim();
 
-    if (!newInterestName) {
-        alert("Por favor, introduce un interés válido.");
-        return;
-    }
+            if (!newInterestName) {
+                alert("Por favor, introduce un interés válido.");
+                return;
+            }
 
-    const usuarioId = localStorage.getItem("userId"); 
-    const interestData = {
-        nombre: newInterestName,
-    };
+            const usuarioId = localStorage.getItem("userId"); 
+            const interestData = {
+                nombre: newInterestName,
+            };
 
-    try {
-        const response = await fetch(`/api/usuario/addInteres?usuarioId=${usuarioId}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(interestData),
+            try {
+                const response = await fetch(`/api/usuario/addInteres?usuarioId=${usuarioId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(interestData),
+                });
+
+                if (response.ok) {
+                    const updatedUser = await response.json();
+                    alert(`Interés "${newInterestName}" añadido con éxito.`);
+                    newInterestInput.value = ""; // Limpiar el campo de entrada
+                    console.log("Usuario actualizado:", updatedUser);
+                    await initializePage(); // Refresca la página o lo que sea necesario después de actualizar
+                } else {
+                    const error = await response.json();
+                    console.error("Error al agregar el interés:", error);
+                    alert("No se pudo añadir el interés. Intenta de nuevo.");
+                }
+            } catch (error) {
+                console.error("Error en la solicitud:", error);
+                alert("Ocurrió un error al procesar la solicitud.");
+            }
         });
-
-        if (response.ok) {
-            const updatedUser = await response.json();
-            alert(`Interés "${newInterestName}" añadido con éxito.`);
-            newInterestInput.value = ""; 
-            console.log("Usuario actualizado:", updatedUser);
-            await initializePage();
-        } else {
-            const error = await response.json();
-            console.error("Error al agregar el interés:", error);
-            alert("No se pudo añadir el interés. Intenta de nuevo.");
-        }
-    } catch (error) {
-        console.error("Error en la solicitud:", error);
-        alert("Ocurrió un error al procesar la solicitud.");
     }
+
+    // Asegúrate de que todos los demás elementos necesarios también estén disponibles
+    const updatePlanBtn = document.getElementById("updatePlan");
+    if (updatePlanBtn) {
+        updatePlanBtn.addEventListener("click", updatePlan);
+    }
+
+    const matchListElement = document.getElementById("matchList");
+    if (matchListElement) {
+        matchListElement.innerHTML = ''; // O cualquier acción que necesites
+    }
+
+    // Asegúrate de que los elementos que vas a manipular existen
+    const userNameElement = document.getElementById('userName');
+    if (userNameElement) {
+        userNameElement.textContent = "Juan Perez"; // O el nombre de usuario que corresponda
+    }
+    
+   
 });
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM completamente cargado");
+   
+
 async function MostrarVideollamada() {
-    const matchId = 1; // Cambiar si es dinámico
+    const matchId = 1; // Cambiar si es dinámico, puede ser obtenido de la URL o localStorage
 
     if (!matchId) {
         alert("No se ha encontrado el matchId.");
@@ -446,18 +488,19 @@ async function MostrarVideollamada() {
             const user2Details = videollamadaData.match.user2;
 
             const userListDiv = document.getElementById('user-list-videollamada');
+            userListDiv.innerHTML = ''; // Limpia la lista antes de llenarla
 
-            if (typeof user2Details === 'object') {
-                // user2 es un objeto, muestra su nombre
+            // Mostrar los detalles de los dos usuarios
+            if (user1Details && user2Details) {
                 userListDiv.innerHTML = `
                     <p><strong>${user1Details.nombre}</strong> (Usuario 1)</p>
                     <p><strong>${user2Details.nombre}</strong> (Usuario 2)</p>
                 `;
             } else {
-                // user2 es un ID, muestra solo el ID
+                // Si no se encuentran detalles, mostrar el ID de los usuarios
                 userListDiv.innerHTML = `
-                    <p><strong>${user1Details.nombre}</strong> (Usuario 1)</p>
-                    <p><strong>Usuario 2 ID: ${user2Details}</strong></p>
+                    <p><strong>Usuario 1 ID:</strong> ${user1Details.userId}</p>
+                    <p><strong>Usuario 2 ID:</strong> ${user2Details}</p>
                 `;
             }
         } else {
@@ -469,3 +512,4 @@ async function MostrarVideollamada() {
     }
 }
 
+});

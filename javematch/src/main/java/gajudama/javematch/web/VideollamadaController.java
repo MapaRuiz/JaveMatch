@@ -13,6 +13,8 @@ import gajudama.javematch.model.Juego;
 import gajudama.javematch.model.Usuario;
 import java.util.Optional;
 import gajudama.javematch.model.UserMatch;
+import java.util.HashMap;
+
 
 import java.time.LocalDateTime;
 
@@ -63,7 +65,7 @@ public class VideollamadaController {
         return new ResponseEntity<>(videollamadas, HttpStatus.OK);
     }
 
-    @PostMapping("/createWithMatch")
+   /* @PostMapping("/createWithMatch")
     public ResponseEntity<?> createVideollamadaWithMatch(@RequestParam Long matchId) {
         try {
             // Obtener el match por ID
@@ -89,7 +91,19 @@ public class VideollamadaController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }*/
+
+   @PostMapping("/createWithMatch")
+public ResponseEntity<Map<String, Long>> createVideollamada(@RequestParam Long matchId) {
+    try {
+        Videollamada videollamada = videollamadaLogic.createVideollamada(matchId);
+        Map<String, Long> response = new HashMap<>();
+        response.put("id", videollamada.getVideollamada_id());
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
     
     // Endpoint específico para agregar un juego a una videollamada
     @PostMapping("/{videollamadaId}/addJuego")

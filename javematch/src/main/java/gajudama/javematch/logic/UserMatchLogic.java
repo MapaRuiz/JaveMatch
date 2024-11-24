@@ -35,6 +35,13 @@ public class UserMatchLogic {
 
     @Transactional
     public UserMatch createMatch(Long usuarioId, Long likedUsuarioId) {
+            Optional<UserMatch> existingMatch = matchRepository.findByUsers(usuarioId, likedUsuarioId);
+
+    if (existingMatch.isPresent()) {
+        // Ya existe un match mutuo; devolver el existente
+        return existingMatch.get();
+    }
+
         if (usuarioId.equals(likedUsuarioId)) {
             throw new RuntimeException("No puedes hacer match contigo mismo.");
         }
@@ -52,8 +59,8 @@ public class UserMatchLogic {
     }
     
     
-    public List<UserMatch> getMutualMatches(Long userId) {
-        return matchRepository.findMutualMatches(userId);
+    public List<UserMatch> getMutualMatch(Long userId) {
+        return matchRepository.findMutualMatch(userId);
     }
 
 }

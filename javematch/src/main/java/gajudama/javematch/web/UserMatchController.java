@@ -81,14 +81,14 @@ public class UserMatchController {
         return new ResponseEntity<>("Usuario rechazado", HttpStatus.OK);
     }
 
-    @GetMapping("/mutual/{userId}")
-    public ResponseEntity<List<UserMatch>> getMutualMatches(@PathVariable Long userId) {
-        try {
-            List<UserMatch> mutualMatches = userMatchLogic.getMutualMatches(userId);
-            return new ResponseEntity<>(mutualMatches, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+   @GetMapping("/mutual/{userId}")
+public ResponseEntity<List<UserMatch>> getMutualMatches(@PathVariable Long userId) {
+    try {
+        List<UserMatch> mutualMatches = userMatchLogic.getMutualMatch(userId);
+        return new ResponseEntity<>(mutualMatches, HttpStatus.OK);
+    } catch (Exception e) {
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
+}
 
 }

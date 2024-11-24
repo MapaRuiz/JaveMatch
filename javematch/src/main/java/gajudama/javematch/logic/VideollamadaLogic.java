@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import gajudama.javematch.accesoDatos.VideollamadaRepository;
 import gajudama.javematch.accesoDatos.UsuarioRepository;
+import gajudama.javematch.accesoDatos.UserMatchRepository;
 import gajudama.javematch.model.Juego;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Videollamada;
@@ -20,6 +21,8 @@ public class VideollamadaLogic {
     @Autowired
     private VideollamadaRepository videollamadaRepository;
     private UsuarioRepository userRepository;
+     @Autowired
+    private UserMatchRepository userMatchRepository;
 
     @Transactional
     public Videollamada createVideollamada(Videollamada videollamada) {
@@ -58,7 +61,7 @@ public class VideollamadaLogic {
         return videollamadaRepository.findAll();
     }
 
-    @Transactional
+    /*@Transactional
     public Videollamada createVideollamada(UserMatch match) {
         Videollamada videollamada = new Videollamada();
     videollamada.setFechaVideollamada(LocalDateTime.now());
@@ -67,7 +70,37 @@ public class VideollamadaLogic {
         videollamada.setJuegos(new ArrayList<>());
 
         return videollamadaRepository.save(videollamada);
+    }*/
+
+   @Transactional
+public Videollamada createVideollamada(Long matchId) {
+      UserMatch userMatch = userMatchRepository.findById(matchId)
+            .orElseThrow(() -> new RuntimeException("Match no encontrado"));
+
+      Optional<Videollamada> existingVideollamada = videollamadaRepository.findByMatch(userMatch);
+    if (existingVideollamada.isPresent()) {
+        userMatch.setVideollamada_Match(existingVideollamada.get());
+       userMatchRepository.save(userMatch);
+        return existingVideollamada.get(); // Devuelve la existente si ya hay una
+
     }
+
+  
+
+    // Crear la videollamada y guardar su referencia
+    Videollamada videollamada = new Videollamada();
+    videollamada.setMatch(userMatch);
+    videollamada.setEstado("Iniciada");
+    videollamada.setFechaVideollamada(LocalDateTime.now());
+     // Guarda la nueva videollamada
+    Videollamada nuevaVideollamada = videollamadaRepository.save(videollamada);
+
+    // Actualizar el campo videollamada_id en UserMatch
+    userMatch.setVideollamada_Match(videollamada);
+    userMatchRepository.save(userMatch);
+
+    return nuevaVideollamada;
+}
 
     @Transactional
     public Videollamada addJuegoToVideollamada(Long videollamadaId, Juego juego) {
@@ -83,5 +116,7 @@ public class VideollamadaLogic {
 
         return videollamadaRepository.save(videollamada);
     }
+
+    
     
 }
