@@ -20,7 +20,7 @@ public class Interes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long interesId;
-
+    //Name
     private String nombre;
 
     @ManyToMany(mappedBy = "intereses")
