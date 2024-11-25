@@ -38,33 +38,6 @@ public class VideollamadaLogic {
         
     }
 
-    @Transactional
-    public Videollamada updateVideollamada(Long id, Videollamada updatedDetails) {
-    return videollamadaRepository.findById(id).map(existingVideollamada -> {
-        // Update the relevant fields from `updatedDetails` to `existingVideollamada`
-        if (updatedDetails.getFechaVideollamada() != null) {
-            existingVideollamada.setFechaVideollamada(updatedDetails.getFechaVideollamada());
-        }
-        if (updatedDetails.getEstado() != null) {
-            existingVideollamada.setEstado(updatedDetails.getEstado());
-        }
-        if (updatedDetails.getJuegos() != null && !updatedDetails.getJuegos().isEmpty()) {
-            existingVideollamada.setJuegos(updatedDetails.getJuegos());
-        }
-        // Persist the changes
-        return videollamadaRepository.save(existingVideollamada);
-    }).orElseThrow(() -> new RuntimeException("Videollamada not found with id: " + id));
-}
-
-    @Transactional
-    public void deleteVideollamada(Long id) {
-        videollamadaRepository.deleteById(id);
-    }
-
-    public List<Videollamada> getAllVideollamadas() {
-        return videollamadaRepository.findAll();
-    }
-
    @Transactional
 public Videollamada createVideollamada(Long matchId) {
       UserMatch userMatch = userMatchRepository.findById(matchId)

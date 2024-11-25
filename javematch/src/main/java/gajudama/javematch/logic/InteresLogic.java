@@ -15,4 +15,5 @@ public class InteresLogic {
     public Optional<Interes> getInteresById(Long id) {
         return interesRepository.findById(id);
     }
+
 }

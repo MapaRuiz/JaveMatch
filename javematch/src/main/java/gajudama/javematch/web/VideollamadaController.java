@@ -37,24 +37,6 @@ public class VideollamadaController {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Videollamada> updateVideollamada(@PathVariable Long id, @RequestBody Videollamada videollamadaDetails) {
-        Videollamada updatedVideollamada = videollamadaLogic.updateVideollamada(id, videollamadaDetails);
-        return new ResponseEntity<>(updatedVideollamada, HttpStatus.OK);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteVideollamada(@PathVariable Long id) {
-        videollamadaLogic.deleteVideollamada(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Videollamada>> getAllVideollamadas() {
-        List<Videollamada> videollamadas = videollamadaLogic.getAllVideollamadas();
-        return new ResponseEntity<>(videollamadas, HttpStatus.OK);
-    }
-
    @PostMapping("/createWithMatch")
 public ResponseEntity<Map<String, Long>> createVideollamada(@RequestParam Long matchId) {
     try {

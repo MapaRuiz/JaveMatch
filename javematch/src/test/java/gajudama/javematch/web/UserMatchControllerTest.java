@@ -1,130 +1,121 @@
 package gajudama.javematch.web;
 
 import gajudama.javematch.logic.UserMatchLogic;
+import gajudama.javematch.logic.UsuarioLogic;
 import gajudama.javematch.model.UserMatch;
 import gajudama.javematch.model.Usuario;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-class UserMatchControllerTest {
+@WebMvcTest(UserMatchController.class)
+public class UserMatchControllerTest {
 
-    @Mock
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
     private UserMatchLogic userMatchLogic;
 
-    @InjectMocks
-    private UserMatchController userMatchController;
+    @MockBean
+    private UsuarioLogic usuarioLogic;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);  // Esto inicializa los mocks
-    }
+    @MockBean
+    private NotificacionController notificacionController;
 
     @Test
-    void testCreateMatch() {
-        Long usuarioId = 1L;
-        Long likedUsuarioId = 2L;
-    
-        // Crear usuarios mock para user1 y user2
-        Usuario usuario1 = new Usuario();
-        usuario1.setUserId(usuarioId);  // Asignar un id para el primer usuario
-    
-        Usuario usuario2 = new Usuario();
-        usuario2.setUserId(likedUsuarioId);  // Asignar un id para el segundo usuario
-    
-        // Crear un match con los usuarios mock
-        UserMatch match = new UserMatch();
-        match.setUser1(usuario1);  // Asignar usuario1 al match
-        match.setUser2(usuario2);  // Asignar usuario2 al match
-        match.setUserMatchId(1L);
-       
-    
-        // Simular la creación de un match
-        when(userMatchLogic.createMatch(usuarioId, likedUsuarioId)).thenReturn(match);
-    
-        ResponseEntity<UserMatch> response = userMatchController.createMatch(usuarioId, likedUsuarioId);
-    
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(usuarioId, response.getBody().getUser1().getUserId());
-        assertEquals(likedUsuarioId, response.getBody().getUser2().getUserId());
-    }
-
-    @Test
-    void testGetMatchById() {
+    public void testGetMatchById_Found() throws Exception {
         Long matchId = 1L;
-        UserMatch match = new UserMatch();
-        match.setUserMatchId(matchId);
+        UserMatch mockMatch = new UserMatch();
+        mockMatch.setUserMatchId(matchId);
+        mockMatch.setFechaMatch(new Date());
 
-        // Simular la búsqueda de un match por ID
-        when(userMatchLogic.getMatchById(matchId)).thenReturn(Optional.of(match));
+        when(userMatchLogic.getMatchById(matchId)).thenReturn(Optional.of(mockMatch));
 
-        ResponseEntity<UserMatch> response = userMatchController.getMatchById(matchId);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(matchId, response.getBody().getUserMatchId());
+        mockMvc.perform(get("/api/usermatch/{id}", matchId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userMatchId").value(matchId))
+                .andExpect(jsonPath("$.fechaMatch").isNotEmpty());
     }
 
     @Test
-    void testGetMatchByIdNotFound() {
+    public void testGetMatchById_NotFound() throws Exception {
         Long matchId = 1L;
 
-        // Simular la no existencia de un match
         when(userMatchLogic.getMatchById(matchId)).thenReturn(Optional.empty());
 
-        ResponseEntity<UserMatch> response = userMatchController.getMatchById(matchId);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        mockMvc.perform(get("/api/usermatch/{id}", matchId))
+                .andExpect(status().isNotFound());
     }
 
     @Test
-    void testRandomMatch() {
-        //Long usuarioId = 1L;
-        //UserMatch match = new UserMatch();
-        //match.setUserMatchId(1L);
-       
+    public void testCreateMatch() throws Exception {
+        Long userId = 1L;
+        Long likedUserId = 2L;
 
-        // Simular la creación de un match aleatorio
-        //when(userMatchLogic.randomMatch(usuarioId)).thenReturn(match);
+        UserMatch mockMatch = new UserMatch();
+        mockMatch.setUserMatchId(1L);
 
-       // ResponseEntity<UserMatch> response = userMatchController.randomMatch(usuarioId);
+        when(userMatchLogic.createMatch(userId, likedUserId)).thenReturn(mockMatch);
 
-       // assertEquals(HttpStatus.CREATED, response.getStatusCode());
-       // assertNotNull(response.getBody());
+        mockMvc.perform(post("/api/usermatch/createMatch")
+                .param("usuarioId", userId.toString())
+                .param("likedUsuarioId", likedUserId.toString()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.userMatchId").value(1L));
     }
 
     @Test
-    void testUpdateMatch() {
-        Long matchId = 1L;
-        UserMatch matchDetails = new UserMatch();
-        matchDetails.setFechaMatch(new Date());
-        
+    public void testAcceptUserAndNotify() throws Exception {
+        Long userId = 1L;
+        Long likedUserId = 2L;
 
-        UserMatch updatedMatch = new UserMatch();
-        updatedMatch.setUserMatchId(matchId);
-        updatedMatch.setFechaMatch(new Date());
-        
+        UserMatch mockMatch = new UserMatch();
+        mockMatch.setUserMatchId(1L);
 
-        // Simular la actualización de un match
-        when(userMatchLogic.updateMatch(matchId, matchDetails)).thenReturn(updatedMatch);
+        Usuario mockUser = new Usuario();
+        mockUser.setUserId(userId);
+        mockUser.setNombre("John Doe");
 
-        ResponseEntity<UserMatch> response = userMatchController.updateMatch(matchId, matchDetails);
+        when(userMatchLogic.createMatch(userId, likedUserId)).thenReturn(mockMatch);
+        when(usuarioLogic.getUsuarioById(userId)).thenReturn(Optional.of(mockUser));
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(updatedMatch.getFechaMatch(), response.getBody().getFechaMatch());
-        
+        mockMvc.perform(post("/api/usermatch/accept/{likedUsuarioId}", likedUserId)
+                .param("usuarioId", userId.toString()))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.userMatchId").value(1L));
+    }
+
+    @Test
+    public void testRejectUser() throws Exception {
+        Long likedUserId = 2L;
+
+        mockMvc.perform(post("/api/usermatch/reject/{likedUsuarioId}", likedUserId))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Usuario rechazado"));
+    }
+
+    @Test
+    public void testGetMutualMatches() throws Exception {
+        Long userId = 1L;
+
+        UserMatch mockMatch = new UserMatch();
+        mockMatch.setUserMatchId(1L);
+
+        when(userMatchLogic.getMutualMatch(userId)).thenReturn(Collections.singletonList(mockMatch));
+
+        mockMvc.perform(get("/api/usermatch/mutual/{userId}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].userMatchId").value(1L));
     }
 }
